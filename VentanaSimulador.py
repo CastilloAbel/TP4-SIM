@@ -91,50 +91,50 @@ class VentanaSimulador:
         iteraciones = 0
 
         def llegada_grupo(env, tipo, distribucion_llegada, ocupacion_inf, ocupacion_sup, tiempos_espera,
-                          tiempo_limpieza_ocupado):
+                  tiempo_limpieza_ocupado):
             nonlocal iteraciones
             while env.now < tiempo_total and iteraciones < cantidad_iteraciones:
-                next_arrival = distribucion_llegada()
+                next_arrival = round(distribucion_llegada(), 2)
                 yield env.timeout(next_arrival)
-                llegada_tiempo = env.now
+                llegada_tiempo = round(env.now, 2)
                 grupo_id = f'{tipo}_{llegada_tiempo}'
                 tiempos_espera[tipo].append(llegada_tiempo)
-                evento = {'hora': llegada_tiempo, 'evento': f'Llega {grupo_id}', 'estado': 'espera'}
+                evento = {'hora': round(llegada_tiempo, 2), 'evento': f'Llega {grupo_id}', 'estado': 'espera'}
 
                 if tipo == 'futbol':
-                    evento['random_futbol'] = next_arrival
-                    evento['tiempo_entre_llegadas_futbol'] = next_arrival
-                    evento['proxima_llegada_futbol'] = llegada_tiempo + next_arrival
+                    evento['random_futbol'] = round(next_arrival, 2)
+                    evento['tiempo_entre_llegadas_futbol'] = round(next_arrival, 2)
+                    evento['proxima_llegada_futbol'] = round(llegada_tiempo + next_arrival, 2)
                 elif tipo == 'basquet':
-                    evento['random_basquet'] = next_arrival
-                    evento['tiempo_entre_llegadas_basquet'] = next_arrival
-                    evento['proxima_llegada_basquet'] = llegada_tiempo + next_arrival
+                    evento['random_basquet'] = round(next_arrival, 2)
+                    evento['tiempo_entre_llegadas_basquet'] = round(next_arrival, 2)
+                    evento['proxima_llegada_basquet'] = round(llegada_tiempo + next_arrival, 2)
                 elif tipo == 'handball':
-                    evento['random_handball'] = next_arrival
-                    evento['tiempo_entre_llegadas_handball'] = next_arrival
-                    evento['proxima_llegada_handball'] = llegada_tiempo + next_arrival
+                    evento['random_handball'] = round(next_arrival, 2)
+                    evento['tiempo_entre_llegadas_handball'] = round(next_arrival, 2)
+                    evento['proxima_llegada_handball'] = round(llegada_tiempo + next_arrival, 2)
 
                 resultados_simulacion.append(evento)
                 with cancha.request(priority=prioridad(tipo)) as turno:
                     yield turno
-                    tiempo_en_cola = env.now - llegada_tiempo
+                    tiempo_en_cola = round(env.now - llegada_tiempo, 2)
                     duracion_ocupacion = random.randint(ocupacion_inf, ocupacion_sup)
-                    evento_ocupado = {'hora': env.now, 'evento': f'Entra {grupo_id}', 'duracion': duracion_ocupacion,
-                                      'estado': 'ocupado', 'tiempo_espera': tiempo_en_cola}
+                    evento_ocupado = {'hora': round(env.now, 2), 'evento': f'Entra {grupo_id}', 'duracion': duracion_ocupacion,
+                                    'estado': 'ocupado', 'tiempo_espera': tiempo_en_cola}
                     if tipo == 'futbol':
-                        evento_ocupado['espera_futbol'] = tiempo_en_cola
+                        evento_ocupado['espera_futbol'] = round(tiempo_en_cola, 2)
                     elif tipo == 'basquet':
-                        evento_ocupado['espera_basquet'] = tiempo_en_cola
+                        evento_ocupado['espera_basquet'] = round(tiempo_en_cola, 2)
                     elif tipo == 'handball':
-                        evento_ocupado['espera_handball'] = tiempo_en_cola
+                        evento_ocupado['espera_handball'] = round(tiempo_en_cola, 2)
                     resultados_simulacion.append(evento_ocupado)
                     yield env.timeout(duracion_ocupacion)
                     tiempo_limpieza_ocupado.append(env.now)
                     with limpieza.request() as limpieza_turno:
                         yield limpieza_turno
                         yield env.timeout(tiempo_demora_limpieza)
-                        evento_limpieza = {'hora': env.now, 'evento': 'Limpieza cancha', 'tiempo_limpieza': tiempo_demora_limpieza,
-                                           'proxima_limpieza': env.now + tiempo_demora_limpieza, 'estado': 'limpieza'}
+                        evento_limpieza = {'hora': round(env.now, 2), 'evento': 'Limpieza cancha', 'tiempo_limpieza': round(tiempo_demora_limpieza, 2),
+                                        'proxima_limpieza': round(env.now + tiempo_demora_limpieza, 2), 'estado': 'limpieza'}
                         resultados_simulacion.append(evento_limpieza)
                 iteraciones += 1
 
@@ -193,13 +193,13 @@ class VentanaSimulador:
         # Definir los encabezados
         tree.heading("Evento", text="Evento")
         tree.heading("Hora", text="Hora")
-        tree.heading("Tiempo entre llegadas Futbol", text="Tiempo entre llegadas Futbol")
-        tree.heading("Próxima llegada Futbol", text="Próxima llegada Futbol")
-        tree.heading("Tiempo entre llegadas Basquet", text="Tiempo entre llegadas Basquet")
-        tree.heading("Próxima llegada Basquet", text="Próxima llegada Basquet")
-        tree.heading("Tiempo entre llegadas Handball", text="Tiempo entre llegadas Handball")
-        tree.heading("Próxima llegada Handball", text="Próxima llegada Handball")
-        tree.heading("Tiempo de limpieza", text="Tiempo de limpieza")
+        tree.heading("Tiempo entre llegadas Futbol", text="Entre lleg Futbol")
+        tree.heading("Próxima llegada Futbol", text="Llegada Futbol")
+        tree.heading("Tiempo entre llegadas Basquet", text="Entre lleg Basquet")
+        tree.heading("Próxima llegada Basquet", text="Llegada Basquet")
+        tree.heading("Tiempo entre llegadas Handball", text="Entre lleg Handball")
+        tree.heading("Próxima llegada Handball", text="Llegada Handball")
+        tree.heading("Tiempo de limpieza", text="Limpieza")
         tree.heading("Próxima limpieza", text="Próxima limpieza")
         tree.heading("Estado", text="Estado")
         tree.heading("Espera Futbol", text="Espera Futbol")
@@ -208,7 +208,7 @@ class VentanaSimulador:
 
         # Definir los anchos de las columnas
         for col in tree["columns"]:
-            tree.column(col, minwidth=100, width=150)
+            tree.column(col, minwidth=80, width=120)
 
         # Añadir datos simulados al Treeview
         for dato in resultados[:cantidad_filas]:  # Mostrar solo las primeras `cantidad_filas` filas
