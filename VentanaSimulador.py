@@ -27,12 +27,10 @@ class VentanaSimulador:
             "Intervalo superior de ocupación de equipo de fútbol:", "Intervalo inferior de ocupación de equipo de básquet:",
             "Intervalo superior de ocupación de equipo de básquet:", "Intervalo inferior de ocupación de equipo de handball:",
             "Intervalo superior de ocupación de equipo de handball:", "Cantidad de equipos en cola máxima:",
-            "Cantidad de filas a mostrar (I):", "Hora específica a mostrar (J):", "Cantidad de iteraciones (N):"
+            "Cantidad de filas a mostrar (I):", "Hora específica a mostrar (J):", "Cantidad de iteraciones (N):", "Precisión:"
         ]
 
-        default_values = [
-            1000, 10, 10, 8, 2, 12, 2, 80, 100, 70, 130, 60, 100, 5, 10, 500, 10
-        ]
+        default_values = [1000, 10, 10, 8, 2, 12, 2, 80, 100, 70, 130, 60, 100, 5, 10, 500, 10, 2]
 
         self.entries = []
         for i, (text, default) in enumerate(zip(labels_text, default_values)):
@@ -71,6 +69,7 @@ class VentanaSimulador:
         cantidad_filas = int(params[14])
         hora_especifica = int(params[15])
         cantidad_iteraciones = int(params[16])
+        precision = int(params[17])
 
         # Llamar a la función de simulación con los parámetros obtenidos
         resultados_simulacion = self.simular(tiempo_total, tiempo_demora_limpieza, media_llegada_futbol,
@@ -78,7 +77,7 @@ class VentanaSimulador:
                                              desviacion_llegada_handball, ocupacion_futbol_inf, ocupacion_futbol_sup,
                                              ocupacion_basquet_inf, ocupacion_basquet_sup, ocupacion_handball_inf,
                                              ocupacion_handball_sup, cantidad_equipos_max, cantidad_iteraciones,
-                                             cantidad_filas, hora_especifica)
+                                             cantidad_filas, hora_especifica, precision)
 
         # Mostrar resultados en una nueva ventana
         self.mostrar_resultados(resultados_simulacion, cantidad_filas, hora_especifica)
@@ -86,7 +85,7 @@ class VentanaSimulador:
     def simular(self, tiempo_total, tiempo_demora_limpieza, media_llegada_futbol, media_llegada_basquet,
                 desviacion_llegada_basquet, media_llegada_handball, desviacion_llegada_handball, ocupacion_futbol_inf,
                 ocupacion_futbol_sup, ocupacion_basquet_inf, ocupacion_basquet_sup, ocupacion_handball_inf,
-                ocupacion_handball_sup, cantidad_equipos_max, cantidad_iteraciones, cantidad_filas, hora_especifica):
+                ocupacion_handball_sup, cantidad_equipos_max, cantidad_iteraciones, cantidad_filas, hora_especifica, precision=2):
         resultados_simulacion = []
         iteraciones = 0
 
@@ -94,47 +93,47 @@ class VentanaSimulador:
                   tiempo_limpieza_ocupado):
             nonlocal iteraciones
             while env.now < tiempo_total and iteraciones < cantidad_iteraciones:
-                next_arrival = round(distribucion_llegada(), 2)
+                next_arrival = round(distribucion_llegada(), precision)
                 yield env.timeout(next_arrival)
-                llegada_tiempo = round(env.now, 2)
-                grupo_id = f'{tipo}_{llegada_tiempo}'
+                llegada_tiempo = round(env.now, precision)
+                grupo_id = f'{tipo}-{llegada_tiempo}'
                 tiempos_espera[tipo].append(llegada_tiempo)
-                evento = {'hora': round(llegada_tiempo, 2), 'evento': f'Llega {grupo_id}', 'estado': 'espera'}
+                evento = {'hora': round(llegada_tiempo, precision), 'evento': f'Llega {grupo_id}', 'estado': 'espera'}
 
                 if tipo == 'futbol':
-                    evento['random_futbol'] = round(next_arrival, 2)
-                    evento['tiempo_entre_llegadas_futbol'] = round(next_arrival, 2)
-                    evento['proxima_llegada_futbol'] = round(llegada_tiempo + next_arrival, 2)
+                    evento['random_futbol'] = round(next_arrival, precision)
+                    evento['tiempo_entre_llegadas_futbol'] = round(next_arrival, precision)
+                    evento['proxima_llegada_futbol'] = round(llegada_tiempo + next_arrival, precision)
                 elif tipo == 'basquet':
-                    evento['random_basquet'] = round(next_arrival, 2)
-                    evento['tiempo_entre_llegadas_basquet'] = round(next_arrival, 2)
-                    evento['proxima_llegada_basquet'] = round(llegada_tiempo + next_arrival, 2)
+                    evento['random_basquet'] = round(next_arrival, precision)
+                    evento['tiempo_entre_llegadas_basquet'] = round(next_arrival, precision)
+                    evento['proxima_llegada_basquet'] = round(llegada_tiempo + next_arrival, precision)
                 elif tipo == 'handball':
-                    evento['random_handball'] = round(next_arrival, 2)
-                    evento['tiempo_entre_llegadas_handball'] = round(next_arrival, 2)
-                    evento['proxima_llegada_handball'] = round(llegada_tiempo + next_arrival, 2)
+                    evento['random_handball'] = round(next_arrival, precision)
+                    evento['tiempo_entre_llegadas_handball'] = round(next_arrival, precision)
+                    evento['proxima_llegada_handball'] = round(llegada_tiempo + next_arrival, precision)
 
                 resultados_simulacion.append(evento)
                 with cancha.request(priority=prioridad(tipo)) as turno:
                     yield turno
-                    tiempo_en_cola = round(env.now - llegada_tiempo, 2)
+                    tiempo_en_cola = round(env.now - llegada_tiempo, precision)
                     duracion_ocupacion = random.randint(ocupacion_inf, ocupacion_sup)
-                    evento_ocupado = {'hora': round(env.now, 2), 'evento': f'Entra {grupo_id}', 'duracion': duracion_ocupacion,
+                    evento_ocupado = {'hora': round(env.now, precision), 'evento': f'Entra {grupo_id}', 'duracion': duracion_ocupacion,
                                     'estado': 'ocupado', 'tiempo_espera': tiempo_en_cola}
                     if tipo == 'futbol':
-                        evento_ocupado['espera_futbol'] = round(tiempo_en_cola, 2)
+                        evento_ocupado['espera_futbol'] = round(tiempo_en_cola, precision)
                     elif tipo == 'basquet':
-                        evento_ocupado['espera_basquet'] = round(tiempo_en_cola, 2)
+                        evento_ocupado['espera_basquet'] = round(tiempo_en_cola, precision)
                     elif tipo == 'handball':
-                        evento_ocupado['espera_handball'] = round(tiempo_en_cola, 2)
+                        evento_ocupado['espera_handball'] = round(tiempo_en_cola, precision)
                     resultados_simulacion.append(evento_ocupado)
                     yield env.timeout(duracion_ocupacion)
                     tiempo_limpieza_ocupado.append(env.now)
                     with limpieza.request() as limpieza_turno:
                         yield limpieza_turno
                         yield env.timeout(tiempo_demora_limpieza)
-                        evento_limpieza = {'hora': round(env.now, 2), 'evento': 'Limpieza cancha', 'tiempo_limpieza': round(tiempo_demora_limpieza, 2),
-                                        'proxima_limpieza': round(env.now + tiempo_demora_limpieza, 2), 'estado': 'limpieza'}
+                        evento_limpieza = {'hora': round(env.now, precision), 'evento': 'Limpieza cancha', 'tiempo_limpieza': round(tiempo_demora_limpieza, precision),
+                                        'proxima_limpieza': round(env.now + tiempo_demora_limpieza, precision), 'estado': 'limpieza'}
                         resultados_simulacion.append(evento_limpieza)
                 iteraciones += 1
 
@@ -213,7 +212,7 @@ class VentanaSimulador:
         # Añadir datos simulados al Treeview
         for dato in resultados[:cantidad_filas]:  # Mostrar solo las primeras `cantidad_filas` filas
             tree.insert("", tk.END, values=(
-                dato.get('evento', ''), dato.get('hora', ''),
+                dato.get('evento', '').split('-')[0], dato.get('hora', ''),
                 dato.get('tiempo_entre_llegadas_futbol', ''), dato.get('proxima_llegada_futbol', ''),
                 dato.get('tiempo_entre_llegadas_basquet', ''), dato.get('proxima_llegada_basquet', ''),
                 dato.get('tiempo_entre_llegadas_handball', ''), dato.get('proxima_llegada_handball', ''),
