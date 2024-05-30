@@ -207,7 +207,8 @@ class VentanaSimulador:
 
         # Definir los anchos de las columnas
         for col in tree["columns"]:
-            tree.column(col, minwidth=80, width=120)
+            if col not in ["Evento"]:
+                tree.column(col, minwidth=80, width=110, anchor="center")
 
         # Añadir datos simulados al Treeview
         for dato in resultados[:cantidad_filas]:  # Mostrar solo las primeras `cantidad_filas` filas
