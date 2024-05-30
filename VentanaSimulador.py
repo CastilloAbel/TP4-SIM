@@ -1,3 +1,4 @@
+
 import tkinter as tk
 from tkinter import ttk
 import simpy
@@ -20,14 +21,13 @@ class VentanaSimulador:
     def create_widgets(self):
         labels_text = [
             "Cantidad de tiempo (X):", "Tiempo de demora de limpieza:",
-            "Media de llegada de equipo de fútbol:",
-            "Media de llegada de equipo de básquet:", "Desviación estándar de llegada de equipo de básquet:",
-            "Media de llegada de equipo de handball:", "Desviación estándar de llegada de equipo de handball:",
-            "Intervalo inferior de ocupación de equipo de fútbol:", "Intervalo superior de ocupación de equipo de fútbol:",
-            "Intervalo inferior de ocupación de equipo de básquet:", "Intervalo superior de ocupación de equipo de básquet:",
-            "Intervalo inferior de ocupación de equipo de handball:", "Intervalo superior de ocupación de equipo de handball:",
-            "Cantidad de equipos en cola máxima:", "Cantidad de filas a mostrar (I):", "Hora específica a mostrar (J):",
-            "Cantidad de iteraciones (N):"
+            "Media de llegada de equipo de fútbol:", "Media de llegada de equipo de básquet:",
+            "Desviación estándar de llegada de equipo de básquet:", "Media de llegada de equipo de handball:",
+            "Desviación estándar de llegada de equipo de handball:", "Intervalo inferior de ocupación de equipo de fútbol:",
+            "Intervalo superior de ocupación de equipo de fútbol:", "Intervalo inferior de ocupación de equipo de básquet:",
+            "Intervalo superior de ocupación de equipo de básquet:", "Intervalo inferior de ocupación de equipo de handball:",
+            "Intervalo superior de ocupación de equipo de handball:", "Cantidad de equipos en cola máxima:",
+            "Cantidad de filas a mostrar (I):", "Hora específica a mostrar (J):", "Cantidad de iteraciones (N):"
         ]
 
         default_values = [
@@ -93,42 +93,49 @@ class VentanaSimulador:
         def llegada_grupo(env, tipo, distribucion_llegada, ocupacion_inf, ocupacion_sup, tiempos_espera,
                           tiempo_limpieza_ocupado):
             nonlocal iteraciones
-            while env.now < tiempo_total and iteraciones < 100000:
+            while env.now < tiempo_total and iteraciones < cantidad_iteraciones:
                 next_arrival = distribucion_llegada()
                 yield env.timeout(next_arrival)
-                grupo_id = f'{tipo}_{env.now}'
-                tiempos_espera[tipo].append(env.now)
-                evento = {'hora': env.now, 'evento': f'Llega {grupo_id}', 'estado': 'espera'}
+                llegada_tiempo = env.now
+                grupo_id = f'{tipo}_{llegada_tiempo}'
+                tiempos_espera[tipo].append(llegada_tiempo)
+                evento = {'hora': llegada_tiempo, 'evento': f'Llega {grupo_id}', 'estado': 'espera'}
 
                 if tipo == 'futbol':
                     evento['random_futbol'] = next_arrival
                     evento['tiempo_entre_llegadas_futbol'] = next_arrival
-                    evento['proxima_llegada_futbol'] = env.now + next_arrival
+                    evento['proxima_llegada_futbol'] = llegada_tiempo + next_arrival
                 elif tipo == 'basquet':
                     evento['random_basquet'] = next_arrival
                     evento['tiempo_entre_llegadas_basquet'] = next_arrival
-                    evento['proxima_llegada_basquet'] = env.now + next_arrival
+                    evento['proxima_llegada_basquet'] = llegada_tiempo + next_arrival
                 elif tipo == 'handball':
                     evento['random_handball'] = next_arrival
                     evento['tiempo_entre_llegadas_handball'] = next_arrival
-                    evento['proxima_llegada_handball'] = env.now + next_arrival
+                    evento['proxima_llegada_handball'] = llegada_tiempo + next_arrival
 
                 resultados_simulacion.append(evento)
                 with cancha.request(priority=prioridad(tipo)) as turno:
                     yield turno
+                    tiempo_en_cola = env.now - llegada_tiempo
                     duracion_ocupacion = random.randint(ocupacion_inf, ocupacion_sup)
-                    evento = {'hora': env.now, 'evento': f'Entra {grupo_id}', 'duracion': duracion_ocupacion,
-                              'estado': 'ocupado'}
-                    resultados_simulacion.append(evento)
+                    evento_ocupado = {'hora': env.now, 'evento': f'Entra {grupo_id}', 'duracion': duracion_ocupacion,
+                                      'estado': 'ocupado', 'tiempo_espera': tiempo_en_cola}
+                    if tipo == 'futbol':
+                        evento_ocupado['espera_futbol'] = tiempo_en_cola
+                    elif tipo == 'basquet':
+                        evento_ocupado['espera_basquet'] = tiempo_en_cola
+                    elif tipo == 'handball':
+                        evento_ocupado['espera_handball'] = tiempo_en_cola
+                    resultados_simulacion.append(evento_ocupado)
                     yield env.timeout(duracion_ocupacion)
                     tiempo_limpieza_ocupado.append(env.now)
                     with limpieza.request() as limpieza_turno:
                         yield limpieza_turno
                         yield env.timeout(tiempo_demora_limpieza)
-                        evento = {'hora': env.now, 'evento': f'Limpieza cancha',
-                                  'tiempo_limpieza': tiempo_demora_limpieza,
-                                  'proxima_limpieza': env.now + tiempo_demora_limpieza, 'estado': 'limpieza'}
-                        resultados_simulacion.append(evento)
+                        evento_limpieza = {'hora': env.now, 'evento': 'Limpieza cancha', 'tiempo_limpieza': tiempo_demora_limpieza,
+                                           'proxima_limpieza': env.now + tiempo_demora_limpieza, 'estado': 'limpieza'}
+                        resultados_simulacion.append(evento_limpieza)
                 iteraciones += 1
 
         def prioridad(tipo):
@@ -147,8 +154,8 @@ class VentanaSimulador:
             tiempos_espera = {'futbol': [], 'basquet': [], 'handball': []}
             tiempo_limpieza_ocupado = []
 
-            # Iniciar los procesos de llegada de los diferentes tipos de grupos
-            env.process(llegada_grupo(env, 'futbol', lambda: random.expovariate(1 / media_llegada_futbol),
+            # Generar llegadas de grupos y manejar las actividades
+            env.process(llegada_grupo(env, 'futbol', lambda: random.expovariate(1.0 / media_llegada_futbol),
                                       ocupacion_futbol_inf, ocupacion_futbol_sup, tiempos_espera,
                                       tiempo_limpieza_ocupado))
             env.process(llegada_grupo(env, 'basquet', lambda: random.gauss(media_llegada_basquet,
@@ -236,4 +243,3 @@ if __name__ == "__main__":
     root = tk.Tk()
     app = VentanaSimulador(root)
     root.mainloop()
-
