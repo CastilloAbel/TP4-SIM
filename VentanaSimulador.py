@@ -1,10 +1,7 @@
-
 import tkinter as tk
 from tkinter import ttk
-import simpy
 import random
-import numpy as np
-
+import heapq
 
 class VentanaSimulador:
     def __init__(self, root):
@@ -18,32 +15,30 @@ class VentanaSimulador:
         # Crear y colocar los widgets de entrada
         self.create_widgets()
 
+    def truncar(self, numero):
+        return int(numero * 100) / 100
+
     def create_widgets(self):
         labels_text = [
-            "Cantidad de tiempo (X):", "Tiempo de demora de limpieza:",
-            "Media de llegada de equipo de fútbol:", "Media de llegada de equipo de básquet:",
-            "Desviación estándar de llegada de equipo de básquet:", "Media de llegada de equipo de handball:",
-            "Desviación estándar de llegada de equipo de handball:", "Intervalo inferior de ocupación de equipo de fútbol:",
-            "Intervalo superior de ocupación de equipo de fútbol:", "Intervalo inferior de ocupación de equipo de básquet:",
-            "Intervalo superior de ocupación de equipo de básquet:", "Intervalo inferior de ocupación de equipo de handball:",
-            "Intervalo superior de ocupación de equipo de handball:", "Cantidad de equipos en cola máxima:",
-            "Cantidad de filas a mostrar (I):", "Hora específica a mostrar (J):", "Cantidad de iteraciones (N):", "Precisión:"
+            "Cantidad de tiempo (X):", "Tiempo de demora de limpieza:(min)", "Media de llegada de equipo de fútbol:(hs)",
+            "Intervalo inferior de llegada de equipo de básquet:(hs)", "Intervalo superior de llegada de equipo de básquet:(hs)",
+            "Intervalo inferior de llegada de equipo de handball:(hs)", "Intervalo superior de llegada de equipo de handball:(hs)",
+            "Intervalo inferior de fin de ocupación de equipo de fútbol:(min)", "Intervalo superior de fin de ocupación de equipo de fútbol:(min)",
+            "Intervalo inferior de fin de ocupación de equipo de básquet:(min)", "Intervalo superior de fin de ocupación de equipo de básquet:(min)",
+            "Intervalo inferior de fin de ocupación de equipo de handball:(min)", "Intervalo superior de fin de ocupación de equipo de handball:(min)",
+            "Cantidad de equipos en cola máxima:", "Cantidad de filas a mostrar (I):", "Hora específica a mostrar (J):"
         ]
-
-        default_values = [1000, 10, 10, 8, 2, 12, 2, 80, 100, 70, 130, 60, 100, 5, 10, 500, 10, 2]
-
+        default_values = [1000, 10, 10, 6, 10, 10, 14, 80, 100, 70, 130, 60, 100, 5, 100, 0]
         self.entries = []
         for i, (text, default) in enumerate(zip(labels_text, default_values)):
-            ttk.Label(self.frame, text=text).grid(column=0, row=i * 2, sticky=tk.W)
+            ttk.Label(self.frame, text=text).grid(column=0, row=i, sticky=tk.W)
             entry = ttk.Entry(self.frame)
-            entry.grid(column=1, row=i * 2, sticky=(tk.W, tk.E))
-            entry.insert(0, str(default))  # Insertar valor por defecto
+            entry.grid(column=1, row=i, sticky=(tk.W, tk.E))
+            entry.insert(0, str(default))
             self.entries.append(entry)
 
         # Botón para iniciar la simulación
-        ttk.Button(self.frame, text="Iniciar Simulación", command=self.iniciar_simulacion).grid(column=1,
-                                                                                                row=len(labels_text) * 2,
-                                                                                                sticky=tk.E)
+        ttk.Button(self.frame, text="Iniciar Simulación", command=self.iniciar_simulacion).grid(column=1, row=len(labels_text), sticky=tk.E)
 
         # Configuración para que los widgets se ajusten al tamaño de la ventana
         for child in self.frame.winfo_children():
@@ -53,191 +48,145 @@ class VentanaSimulador:
         # Obtener los valores de los campos de entrada
         params = [entry.get() for entry in self.entries]
         tiempo_total = int(params[0])
-        tiempo_demora_limpieza = int(params[1])
+        tiempo_demora_limpieza = self.truncar(float(params[1]) / 60)
         media_llegada_futbol = float(params[2])
-        media_llegada_basquet = float(params[3])
-        desviacion_llegada_basquet = float(params[4])
-        media_llegada_handball = float(params[5])
-        desviacion_llegada_handball = float(params[6])
-        ocupacion_futbol_inf = int(params[7])
-        ocupacion_futbol_sup = int(params[8])
-        ocupacion_basquet_inf = int(params[9])
-        ocupacion_basquet_sup = int(params[10])
-        ocupacion_handball_inf = int(params[11])
-        ocupacion_handball_sup = int(params[12])
+        intervalo_llegada_basquet_inf = float(params[3])
+        intervalo_llegada_basquet_sup = float(params[4])
+        intervalo_llegada_handball_inf = float(params[5])
+        intervalo_llegada_handball_sup = float(params[6])
+        fin_ocupacion_futbol_inf = self.truncar(float(params[7]) / 60)
+        fin_ocupacion_futbol_sup = self.truncar(float(params[8]) / 60)
+        fin_ocupacion_basquet_inf = self.truncar(float(params[9]) / 60)
+        fin_ocupacion_basquet_sup = self.truncar(float(params[10]) / 60)
+        fin_ocupacion_handball_inf = self.truncar(float(params[11]) / 60)
+        fin_ocupacion_handball_sup = self.truncar(float(params[12]) / 60)
         cantidad_equipos_max = int(params[13])
         cantidad_filas = int(params[14])
         hora_especifica = int(params[15])
-        cantidad_iteraciones = int(params[16])
-        precision = int(params[17])
 
-        # Llamar a la función de simulación con los parámetros obtenidos
-        resultados_simulacion = self.simular(tiempo_total, tiempo_demora_limpieza, media_llegada_futbol,
-                                             media_llegada_basquet, desviacion_llegada_basquet, media_llegada_handball,
-                                             desviacion_llegada_handball, ocupacion_futbol_inf, ocupacion_futbol_sup,
-                                             ocupacion_basquet_inf, ocupacion_basquet_sup, ocupacion_handball_inf,
-                                             ocupacion_handball_sup, cantidad_equipos_max, cantidad_iteraciones,
-                                             cantidad_filas, hora_especifica, precision)
+        # Inicializar el polideportivo y la fila de eventos
+        polideportivo = Polideportivo()
+        fila = Fila(0, polideportivo)
 
-        # Mostrar resultados en una nueva ventana
-        self.mostrar_resultados(resultados_simulacion, cantidad_filas, hora_especifica)
+        # Agregar evento de inicialización
+        fila.agregar_evento(0, lambda: None, "Inicialización")
 
-    def simular(self, tiempo_total, tiempo_demora_limpieza, media_llegada_futbol, media_llegada_basquet,
-                desviacion_llegada_basquet, media_llegada_handball, desviacion_llegada_handball, ocupacion_futbol_inf,
-                ocupacion_futbol_sup, ocupacion_basquet_inf, ocupacion_basquet_sup, ocupacion_handball_inf,
-                ocupacion_handball_sup, cantidad_equipos_max, cantidad_iteraciones, cantidad_filas, hora_especifica, precision=2):
-        resultados_simulacion = []
-        iteraciones = 0
+        # Generar eventos de llegada
+        def llegada_equipo(tipo):
+            def evento():
+                polideportivo.agregar_equipo(tipo)
+                if polideportivo.estado == "Cancha Libre":
+                    fila.agregar_evento(fila.reloj, ocupar_cancha, "Ocupar Cancha")
+            if tipo == 'futbol':
+                return evento, "Llegada de Equipo Futbol"
+            elif tipo == 'basquet':
+                return evento, "Llegada de Equipo BasketBall"
+            elif tipo == 'handball':
+                return evento, "Llegada de Equipo HandBall"
 
-        def llegada_grupo(env, tipo, distribucion_llegada, ocupacion_inf, ocupacion_sup, tiempos_espera,
-                  tiempo_limpieza_ocupado):
-            nonlocal iteraciones
-            while env.now < tiempo_total and iteraciones < cantidad_iteraciones:
-                next_arrival = round(distribucion_llegada(), precision)
-                yield env.timeout(next_arrival)
-                llegada_tiempo = round(env.now, precision)
-                grupo_id = f'{tipo}-{llegada_tiempo}'
-                tiempos_espera[tipo].append(llegada_tiempo)
-                evento = {'hora': round(llegada_tiempo, precision), 'evento': f'Llega {grupo_id}', 'estado': 'espera'}
+        def ocupar_cancha():
+            tipo = polideportivo.tipo_siguiente_equipo()
+            if tipo == 'basquet':
+                polideportivo.ocupar(basquet=True)
+                tiempo_ocupacion = random.uniform(fin_ocupacion_basquet_inf, fin_ocupacion_basquet_sup)
+                fila.agregar_evento(fila.reloj + tiempo_ocupacion, liberar_cancha, "Fin de ocupacion de cancha BasketBall")
+            elif tipo == 'futbol/handball':
+                polideportivo.ocupar()
+                if random.choice([True, False]):  # Randomly choose between fútbol and handball
+                    tiempo_ocupacion = random.uniform(fin_ocupacion_futbol_inf, fin_ocupacion_futbol_sup)
+                    fila.agregar_evento(fila.reloj + tiempo_ocupacion, liberar_cancha, "Fin de ocupacion de cancha Futbol")
+                else:
+                    tiempo_ocupacion = random.uniform(fin_ocupacion_handball_inf, fin_ocupacion_handball_sup)
+                    fila.agregar_evento(fila.reloj + tiempo_ocupacion, liberar_cancha, "Fin de ocupacion de cancha HandBall")
 
-                if tipo == 'futbol':
-                    evento['random_futbol'] = round(next_arrival, precision)
-                    evento['tiempo_entre_llegadas_futbol'] = round(next_arrival, precision)
-                    evento['proxima_llegada_futbol'] = round(llegada_tiempo + next_arrival, precision)
-                elif tipo == 'basquet':
-                    evento['random_basquet'] = round(next_arrival, precision)
-                    evento['tiempo_entre_llegadas_basquet'] = round(next_arrival, precision)
-                    evento['proxima_llegada_basquet'] = round(llegada_tiempo + next_arrival, precision)
-                elif tipo == 'handball':
-                    evento['random_handball'] = round(next_arrival, precision)
-                    evento['tiempo_entre_llegadas_handball'] = round(next_arrival, precision)
-                    evento['proxima_llegada_handball'] = round(llegada_tiempo + next_arrival, precision)
+        def liberar_cancha():
+            polideportivo.liberar()
+            fila.agregar_evento(fila.reloj, limpieza_cancha, "Limpieza Cancha")
 
-                resultados_simulacion.append(evento)
-                with cancha.request(priority=prioridad(tipo)) as turno:
-                    yield turno
-                    tiempo_en_cola = round(env.now - llegada_tiempo, precision)
-                    duracion_ocupacion = random.randint(ocupacion_inf, ocupacion_sup)
-                    evento_ocupado = {'hora': round(env.now, precision), 'evento': f'Entra {grupo_id}', 'duracion': duracion_ocupacion,
-                                    'estado': 'ocupado', 'tiempo_espera': tiempo_en_cola}
-                    if tipo == 'futbol':
-                        evento_ocupado['espera_futbol'] = round(tiempo_en_cola, precision)
-                    elif tipo == 'basquet':
-                        evento_ocupado['espera_basquet'] = round(tiempo_en_cola, precision)
-                    elif tipo == 'handball':
-                        evento_ocupado['espera_handball'] = round(tiempo_en_cola, precision)
-                    resultados_simulacion.append(evento_ocupado)
-                    yield env.timeout(duracion_ocupacion)
-                    tiempo_limpieza_ocupado.append(env.now)
-                    with limpieza.request() as limpieza_turno:
-                        yield limpieza_turno
-                        yield env.timeout(tiempo_demora_limpieza)
-                        evento_limpieza = {'hora': round(env.now, precision), 'evento': 'Limpieza cancha', 'tiempo_limpieza': round(tiempo_demora_limpieza, precision),
-                                        'proxima_limpieza': round(env.now + tiempo_demora_limpieza, precision), 'estado': 'limpieza'}
-                        resultados_simulacion.append(evento_limpieza)
-                iteraciones += 1
+        def limpieza_cancha():
+            fila.agregar_evento(fila.reloj + tiempo_demora_limpieza, finalizar_limpieza, "Fin de limpieza de cancha")
 
-        def prioridad(tipo):
-            if (tipo == 'handball' and (env.now not in tiempos_espera['futbol']) and (
-                    env.now not in tiempos_espera['basquet'])):
-                return 2
-            return 1
+        def finalizar_limpieza():
+            polideportivo.liberar()
+            if polideportivo.hay_equipos_en_espera():
+                fila.agregar_evento(fila.reloj, ocupar_cancha, "Ocupar Cancha")
 
-        for _ in range(cantidad_iteraciones):
-            # Crear el entorno de simulación
-            env = simpy.Environment()
+        # Agregar eventos iniciales
+        evento, nombre_evento = llegada_equipo('futbol')
+        fila.agregar_evento(random.expovariate(1.0 / media_llegada_futbol), evento, nombre_evento)
 
-            # Crear los recursos y contenedores para las estadísticas
-            cancha = simpy.PriorityResource(env, capacity=1)
-            limpieza = simpy.Resource(env, capacity=1)
-            tiempos_espera = {'futbol': [], 'basquet': [], 'handball': []}
-            tiempo_limpieza_ocupado = []
+        evento, nombre_evento = llegada_equipo('basquet')
+        fila.agregar_evento(random.uniform(intervalo_llegada_basquet_inf, intervalo_llegada_basquet_sup), evento, nombre_evento)
 
-            # Generar llegadas de grupos y manejar las actividades
-            env.process(llegada_grupo(env, 'futbol', lambda: random.expovariate(1.0 / media_llegada_futbol),
-                                      ocupacion_futbol_inf, ocupacion_futbol_sup, tiempos_espera,
-                                      tiempo_limpieza_ocupado))
-            env.process(llegada_grupo(env, 'basquet', lambda: random.gauss(media_llegada_basquet,
-                                                                           desviacion_llegada_basquet),
-                                      ocupacion_basquet_inf, ocupacion_basquet_sup, tiempos_espera,
-                                      tiempo_limpieza_ocupado))
-            env.process(llegada_grupo(env, 'handball', lambda: random.gauss(media_llegada_handball,
-                                                                            desviacion_llegada_handball),
-                                      ocupacion_handball_inf, ocupacion_handball_sup, tiempos_espera,
-                                      tiempo_limpieza_ocupado))
+        evento, nombre_evento = llegada_equipo('handball')
+        fila.agregar_evento(random.uniform(intervalo_llegada_handball_inf, intervalo_llegada_handball_sup), evento, nombre_evento)
 
-            # Ejecutar la simulación
-            env.run(until=tiempo_total)
+        # Ejecutar la simulación
+        while fila.reloj < tiempo_total and fila.event_queue:
+            fila.procesar_evento()
 
-        return resultados_simulacion
+        # Mostrar resultados
+        self.mostrar_resultados(fila.event_log, cantidad_filas, hora_especifica)
 
-    def mostrar_resultados(self, resultados, cantidad_filas, hora_especifica):
-        # Crear una nueva ventana para mostrar los resultados
-        ventana_resultados = tk.Toplevel(self.root)
-        ventana_resultados.title("Resultados de la Simulación")
+    def mostrar_resultados(self, eventos, cantidad_filas, hora_especifica):
+        print(f"Mostrando {cantidad_filas} filas de eventos a partir de la hora {hora_especifica}:")
 
-        # Crear un frame para contener el Treeview y las Scrollbars
-        frame_tree = ttk.Frame(ventana_resultados)
-        frame_tree.pack(fill=tk.BOTH, expand=True)
+        # Filtrar los eventos a partir de la hora específica
+        eventos_filtrados = [evento for evento in eventos if evento[0] >= hora_especifica]
 
-        # Crear un Treeview para mostrar los resultados
-        tree = ttk.Treeview(frame_tree, columns=(
-            "Evento", "Hora", "Tiempo entre llegadas Futbol", "Próxima llegada Futbol",
-            "Tiempo entre llegadas Basquet", "Próxima llegada Basquet",
-            "Tiempo entre llegadas Handball", "Próxima llegada Handball",
-            "Tiempo de limpieza", "Próxima limpieza",
-            "Estado", "Espera Futbol", "Espera Basquet", "Espera Handball"
-        ), show="headings")
+        # Mostrar solo la cantidad de filas solicitada
+        for evento in eventos_filtrados[:cantidad_filas]:
+            tiempo_truncado = self.truncar(evento[0])
+            print(f"{tiempo_truncado:.2f}: {evento[1]}")
 
-        # Definir los encabezados
-        tree.heading("Evento", text="Evento")
-        tree.heading("Hora", text="Hora")
-        tree.heading("Tiempo entre llegadas Futbol", text="Entre lleg Futbol")
-        tree.heading("Próxima llegada Futbol", text="Llegada Futbol")
-        tree.heading("Tiempo entre llegadas Basquet", text="Entre lleg Basquet")
-        tree.heading("Próxima llegada Basquet", text="Llegada Basquet")
-        tree.heading("Tiempo entre llegadas Handball", text="Entre lleg Handball")
-        tree.heading("Próxima llegada Handball", text="Llegada Handball")
-        tree.heading("Tiempo de limpieza", text="Limpieza")
-        tree.heading("Próxima limpieza", text="Próxima limpieza")
-        tree.heading("Estado", text="Estado")
-        tree.heading("Espera Futbol", text="Espera Futbol")
-        tree.heading("Espera Basquet", text="Espera Basquet")
-        tree.heading("Espera Handball", text="Espera Handball")
+class Polideportivo:
+    def __init__(self):
+        self.nombre = "Polideportivo General Paz"
+        self.estado = "Cancha Libre"
+        self.colaFyH = 0
+        self.colaB = 0
+        self.cola = []
 
-        # Definir los anchos de las columnas
-        for col in tree["columns"]:
-            if col not in ["Evento"]:
-                tree.column(col, minwidth=80, width=110, anchor="center")
+    def agregar_equipo(self, tipo):
+        if tipo == 'basquet':
+            self.colaB += 1
+        else:
+            self.colaFyH += 1
+        self.cola.append(tipo)
 
-        # Añadir datos simulados al Treeview
-        for dato in resultados[:cantidad_filas]:  # Mostrar solo las primeras `cantidad_filas` filas
-            tree.insert("", tk.END, values=(
-                dato.get('evento', '').split('-')[0], dato.get('hora', ''),
-                dato.get('tiempo_entre_llegadas_futbol', ''), dato.get('proxima_llegada_futbol', ''),
-                dato.get('tiempo_entre_llegadas_basquet', ''), dato.get('proxima_llegada_basquet', ''),
-                dato.get('tiempo_entre_llegadas_handball', ''), dato.get('proxima_llegada_handball', ''),
-                dato.get('tiempo_limpieza', ''), dato.get('proxima_limpieza', ''),
-                dato.get('estado', ''), dato.get('espera_futbol', ''), dato.get('espera_basquet', ''),
-                dato.get('espera_handball', '')
-            ))
+    def tipo_siguiente_equipo(self):
+        if self.cola:
+            return self.cola.pop(0)
+        return None
 
-        # Añadir Scrollbars
-        hsb = ttk.Scrollbar(frame_tree, orient="horizontal", command=tree.xview)
-        vsb = ttk.Scrollbar(frame_tree, orient="vertical", command=tree.yview)
-        tree.configure(xscrollcommand=hsb.set, yscrollcommand=vsb.set)
-        hsb.pack(side=tk.BOTTOM, fill=tk.X)
-        vsb.pack(side=tk.RIGHT, fill=tk.Y)
-        tree.pack(fill=tk.BOTH, expand=True)
+    def ocupar(self, basquet=False):
+        self.estado = "Cancha Ocupada"
+        if basquet:
+            self.colaB -= 1
+        else:
+            self.colaFyH -= 1
 
-        # Mostrar la hora específica si está en los resultados
-        resultados_hora_especifica = [dato for dato in resultados if dato.get('hora', None) == hora_especifica]
-        if resultados_hora_especifica:
-            label_hora_especifica = ttk.Label(ventana_resultados, text=f"Resultados para la hora específica {hora_especifica}:")
-            label_hora_especifica.pack(pady=10)
-            for dato in resultados_hora_especifica:
-                ttk.Label(ventana_resultados, text=str(dato)).pack()
+    def liberar(self):
+        self.estado = "Cancha Libre"
 
+    def hay_equipos_en_espera(self):
+        return self.colaFyH > 0 or self.colaB > 0
+
+class Fila:
+    def __init__(self, reloj, polideportivo):
+        self.reloj = reloj
+        self.polideportivo = polideportivo
+        self.event_queue = []
+        self.event_log = []
+
+    def agregar_evento(self, tiempo, evento, nombre_evento):
+        heapq.heappush(self.event_queue, (tiempo, evento, nombre_evento))
+
+    def procesar_evento(self):
+        tiempo, evento, nombre_evento = heapq.heappop(self.event_queue)
+        self.reloj = tiempo
+        evento()
+        self.event_log.append((tiempo, nombre_evento))
 
 if __name__ == "__main__":
     root = tk.Tk()
