@@ -76,28 +76,31 @@ class VentanaSimulador:
             def evento():
                 polideportivo.agregar_equipo(tipo)
                 if polideportivo.estado == "Cancha Libre":
-                    fila.agregar_evento(fila.reloj, ocupar_cancha, "Ocupar Cancha")
+                    #fila.agregar_evento(fila.reloj, ocupar_cancha, "Ocupar Cancha")
+                    if tipo == 'futbol':
+                        evento, nombre_evento = llegada_equipo('futbol')
+                        fila.agregar_evento(fila.reloj + (random.expovariate(1.0 / media_llegada_futbol)), evento, nombre_evento)
+                        polideportivo.ocupar()
+                        tiempo_ocupacion = random.uniform(fin_ocupacion_futbol_inf, fin_ocupacion_futbol_sup)
+                        fila.agregar_evento(fila.reloj + tiempo_ocupacion, limpieza_cancha, "Fin de ocupacion de cancha Futbol")
+                    elif tipo == 'basquet':
+                        evento, nombre_evento = llegada_equipo('basquet')
+                        fila.agregar_evento(fila.reloj + (random.uniform(intervalo_llegada_basquet_inf, intervalo_llegada_basquet_sup)), evento, nombre_evento)
+                        polideportivo.ocupar(basquet=True)
+                        tiempo_ocupacion = random.uniform(fin_ocupacion_basquet_inf, fin_ocupacion_basquet_sup)
+                        fila.agregar_evento(fila.reloj + tiempo_ocupacion, limpieza_cancha, "Fin de ocupacion de cancha BasketBall")
+                    elif tipo == 'handball':
+                            evento, nombre_evento = llegada_equipo('handball')
+                            fila.agregar_evento(fila.reloj + (random.uniform(intervalo_llegada_handball_inf, intervalo_llegada_handball_sup)), evento, nombre_evento)
+                            polideportivo.ocupar()
+                            tiempo_ocupacion = random.uniform(fin_ocupacion_handball_inf, fin_ocupacion_handball_sup)
+                            fila.agregar_evento(fila.reloj + tiempo_ocupacion, limpieza_cancha, "Fin de ocupacion de cancha HandBall")
             if tipo == 'futbol':
                 return evento, "Llegada de Equipo Futbol"
             elif tipo == 'basquet':
                 return evento, "Llegada de Equipo BasketBall"
             elif tipo == 'handball':
                 return evento, "Llegada de Equipo HandBall"
-
-        def ocupar_cancha():
-            tipo = polideportivo.tipo_siguiente_equipo()
-            if tipo == 'basquet':
-                polideportivo.ocupar(basquet=True)
-                tiempo_ocupacion = random.uniform(fin_ocupacion_basquet_inf, fin_ocupacion_basquet_sup)
-                fila.agregar_evento(fila.reloj + tiempo_ocupacion, limpieza_cancha, "Fin de ocupacion de cancha BasketBall")
-            elif tipo == 'futbol/handball':
-                polideportivo.ocupar()
-                if random.choice([True, False]):  # Randomly choose between fútbol and handball
-                    tiempo_ocupacion = random.uniform(fin_ocupacion_futbol_inf, fin_ocupacion_futbol_sup)
-                    fila.agregar_evento(fila.reloj + tiempo_ocupacion, limpieza_cancha, "Fin de ocupacion de cancha Futbol")
-                else:
-                    tiempo_ocupacion = random.uniform(fin_ocupacion_handball_inf, fin_ocupacion_handball_sup)
-                    fila.agregar_evento(fila.reloj + tiempo_ocupacion, limpieza_cancha, "Fin de ocupacion de cancha HandBall")
 
 #        def liberar_cancha():
 #            polideportivo.liberar()
@@ -109,7 +112,19 @@ class VentanaSimulador:
         def finalizar_limpieza():
             polideportivo.liberar()
             if polideportivo.hay_equipos_en_espera():
-                fila.agregar_evento(fila.reloj, ocupar_cancha, "Ocupar Cancha")
+                tipo = polideportivo.tipo_siguiente_equipo()
+                if tipo == 'basquet':
+                    polideportivo.ocupar(basquet=True)
+                    tiempo_ocupacion = random.uniform(fin_ocupacion_basquet_inf, fin_ocupacion_basquet_sup)
+                    fila.agregar_evento(fila.reloj + tiempo_ocupacion, limpieza_cancha, "Fin de ocupacion de cancha BasketBall")
+                elif tipo == 'futbol/handball':
+                    polideportivo.ocupar()
+                    if random.choice([True, False]):  # Randomly choose between fútbol and handball
+                        tiempo_ocupacion = random.uniform(fin_ocupacion_futbol_inf, fin_ocupacion_futbol_sup)
+                        fila.agregar_evento(fila.reloj + tiempo_ocupacion, limpieza_cancha, "Fin de ocupacion de cancha Futbol")
+                    else:
+                        tiempo_ocupacion = random.uniform(fin_ocupacion_handball_inf, fin_ocupacion_handball_sup)
+                        fila.agregar_evento(fila.reloj + tiempo_ocupacion, limpieza_cancha, "Fin de ocupacion de cancha HandBall")
 
         # Agregar eventos iniciales
         evento, nombre_evento = llegada_equipo('futbol')
