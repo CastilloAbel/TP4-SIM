@@ -10,8 +10,10 @@ class Temporal:
         self.nombre = nombre
         self.estado = estado
         self.hora_llegada = hora_llegada
+
     def set_estado(self, estado):
         self.estado = estado
+    
     def __str__(self):
         return f"Nombre:{self.nombre}, Estado:{self.estado}, Hora de llegada:{self.hora_llegada}\n"
 
@@ -38,9 +40,9 @@ class Fila:
         return Temporal(nombre, estado, hora_llegada)
     def personal_limpieza(self, nombre, estado, hora_llegada):
         return Temporal(nombre, estado, hora_llegada)
+    
     def distribucion_exponencial(self, rnd, media):
         return (-1 * media) * math.log(1 - rnd)
-    
     def distribucion_uniforme(self, rnd, inf, sup):
         return inf + (sup - inf) * rnd
     def simular(self, datos):
@@ -299,7 +301,8 @@ class VentanaSimulador:
                 tabla.append(fila)
 
         for fila in tabla:
-            print(fila)
+            for objeto in fila.objetos:
+                print(objeto) 
 
         # Crear una nueva ventana para mostrar los resultados
         root_resultados = tk.Tk()
@@ -312,8 +315,12 @@ class ResultadosVentana:
         #self.frame = frame
         self.root.title("Resultados de la Simulación")
 
+        # Crear un Frame para contener el Treeview y los scrollbars
+        self.frame = ttk.Frame(root)
+        self.frame.pack(expand=True, fill=tk.BOTH)
+
         # Crear el Treeview para mostrar los resultados de la simulación
-        self.tree = ttk.Treeview(self.root, columns=("ID", "Evento", "Reloj","rnd_f", "llegada_f","proxima_f", 
+        self.tree = ttk.Treeview(self.frame, columns=("ID", "Evento", "Reloj","rnd_f", "llegada_f","proxima_f", 
                                 "rnd_h", "llegada_h","proxima_h", "rnd_b", "llegada_b","proxima_b",
                                 "rnd_cancha_f", "ocupacion_cancha_f","fin_ocupacion_f",
                                 "rnd_cancha_h", "ocupacion_cancha_h","fin_ocupacion_h",
@@ -321,40 +328,33 @@ class ResultadosVentana:
                                 "tiempo_actual", "demora_limpieza", "fin_limpieza",
                                 "Estado Cancha", "ColaB", "ColaFyH", "Objetos"), show="headings")
         
-        self.tree.heading("ID", text="ID")
-        self.tree.heading("Evento", text="Evento")
-        self.tree.heading("Reloj", text="Reloj")
-        self.tree.heading("rnd_f", text="rnd_f")
-        self.tree.heading("llegada_f", text="llegada_f")
-        self.tree.heading("proxima_f", text="proxima_f")
-        self.tree.heading("rnd_h", text="rnd_h")
-        self.tree.heading("llegada_h", text="llegada_h")
-        self.tree.heading("proxima_h", text="proxima_h")
-        self.tree.heading("rnd_b", text="rnd_b")
-        self.tree.heading("llegada_b", text="llegada_b")
-        self.tree.heading("proxima_b", text="proxima_b")
+        # Configurar encabezados y anchos de columna
+        columns = [
+            ("ID", 50), ("Evento", 200), ("Reloj", 150), ("rnd_f", 150), ("llegada_f", 150), ("proxima_f", 150),
+            ("rnd_h", 150), ("llegada_h", 150), ("proxima_h", 150), ("rnd_b", 150), ("llegada_b", 150), ("proxima_b", 150),
+            ("rnd_cancha_f", 150), ("ocupacion_cancha_f", 150), ("fin_ocupacion_f", 150),
+            ("rnd_cancha_h", 150), ("ocupacion_cancha_h", 150), ("fin_ocupacion_h", 150),
+            ("rnd_cancha_b", 150), ("ocupacion_cancha_b", 150), ("fin_ocupacion_b", 150),
+            ("tiempo_actual", 150), ("demora_limpieza", 150), ("fin_limpieza", 150),
+            ("Estado Cancha", 100), ("ColaB", 60), ("ColaFyH", 60), ("Objetos", 500)
+        ]
 
-        self.tree.heading("rnd_cancha_f", text="rnd_cancha_f")
-        self.tree.heading("ocupacion_cancha_f", text="ocupacion_cancha_f")
-        self.tree.heading("fin_ocupacion_f", text="fin_ocupacion_f")
+        for col, width in columns:
+            self.tree.heading(col, text=col)
+            self.tree.column(col, width=width, anchor='center')
+    
 
-        self.tree.heading("rnd_cancha_h", text="rnd_cancha_h")
-        self.tree.heading("ocupacion_cancha_h", text="ocupacion_cancha_h")
-        self.tree.heading("fin_ocupacion_h", text="fin_ocupacion_h")
+        # Crear los scrollbars y asociarlos con el Treeview
+        self.vsb = ttk.Scrollbar(self.frame, orient="vertical", command=self.tree.yview)
+        self.hsb = ttk.Scrollbar(self.frame, orient="horizontal", command=self.tree.xview)
+        self.tree.configure(yscrollcommand=self.vsb.set, xscrollcommand=self.hsb.set)
 
-        self.tree.heading("rnd_cancha_b", text="rnd_cancha_b")
-        self.tree.heading("ocupacion_cancha_b", text="ocupacion_cancha_b")
-        self.tree.heading("fin_ocupacion_b", text="fin_ocupacion_b")
-
-        self.tree.heading("tiempo_actual", text="tiempo_actual")
-        self.tree.heading("demora_limpieza", text="demora_limpieza")
-        self.tree.heading("fin_limpieza", text="fin_limpieza")
-
-        self.tree.heading("Estado Cancha", text="Estado Cancha")
-        self.tree.heading("ColaB", text="ColaB")
-        self.tree.heading("ColaFyH", text="ColaFyH")
-        self.tree.heading("Objetos", text="Objetos")
+        # Empaquetar el Treeview y los scrollbars
+        self.vsb.pack(side=tk.RIGHT, fill=tk.Y)
+        self.hsb.pack(side=tk.BOTTOM, fill=tk.X)
         self.tree.pack(expand=True, fill=tk.BOTH)
+
+
 
     def mostrar_resultados(self, tabla_resultados):
         # Limpiar el Treeview antes de insertar nuevos datos
@@ -378,3 +378,4 @@ if __name__ == "__main__":
     root = tk.Tk()
     ventana_simulador = VentanaSimulador(root)
     root.mainloop()
+    
