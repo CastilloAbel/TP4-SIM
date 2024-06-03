@@ -59,7 +59,7 @@ class Fila:
                     self.eventos = [[rnd_llegada_futbol, llegada_futbol, self.reloj + llegada_futbol], 
                             [self.eventos[1]], 
                             [self.eventos[2]],
-                            [[rnd_ocupacion_futbol, fin_ocupacion_futbol, self.reloj + fin_ocupacion_futbol]], 
+                            [rnd_ocupacion_futbol, fin_ocupacion_futbol, self.reloj + fin_ocupacion_futbol], 
                             [self.eventos[4]], [self.eventos[5]], [self.eventos[6]]]
                 else:
                     self.colaFyH.append("Futbol")
@@ -73,8 +73,8 @@ class Fila:
                     self.eventos = [[self.eventos[0]], 
                             [rnd_llegada_basquet, llegada_basquet, self.reloj + llegada_basquet], 
                             [self.eventos[2]],
-                            [self.eventos[3], 
-                            [rnd_ocupacion_basquet, fin_ocupacion_basquet, self.reloj + fin_ocupacion_basquet]], 
+                            [self.eventos[3]], 
+                            [rnd_ocupacion_basquet, fin_ocupacion_basquet, self.reloj + fin_ocupacion_basquet], 
                             [self.eventos[5]], [self.eventos[6]]]
                 else:
                     self.colaB.append("Basquet")
@@ -93,11 +93,12 @@ class Fila:
                     rnd_ocupacion_handball = random.Random()
                     fin_ocupacion_handball  = self.distribucion_uniforme(rnd_ocupacion_handball, fin_ocupacion_handball_inf,fin_ocupacion_handball_sup)
                     self.eventos = [[self.eventos[0]],
+                            [self.eventos[1]],
                             [rnd_llegada_handball, llegada_handball, self.reloj + llegada_handball],
-                            [self.eventos[2]],
-                            [self.eventos[3],
-                            [rnd_ocupacion_handball, fin_ocupacion_handball, self.reloj + fin_ocupacion_handball]],
-                            [self.eventos[4]], [self.eventos[5]]]
+                            [self.eventos[3]],
+                            [self.eventos[4]],
+                            [rnd_ocupacion_handball, fin_ocupacion_handball, self.reloj + fin_ocupacion_handball], 
+                            [self.eventos[6]]]
                 else:
                     self.colaB.append("Hanball")
                 self.nombre_evento = "Llegada Equipo de Hanball"
@@ -108,8 +109,8 @@ class Fila:
                 self.eventos = [[self.eventos[0]], 
                             [self.eventos[1]], 
                             [self.eventos[2]],
-                            [self.eventos[3], 
-                            [self.eventos[4]]], 
+                            [self.eventos[3]], 
+                            [self.eventos[4]], 
                             [self.eventos[5]], 
                             [[hora_comienzo_limpieza, tiempo_demora_limpieza, self.reloj + tiempo_demora_limpieza]]] 
             elif self.reloj == self.eventos[4][2]:
@@ -118,8 +119,8 @@ class Fila:
                 self.eventos = [[self.eventos[0]], 
                             [self.eventos[1]], 
                             [self.eventos[2]],
-                            [self.eventos[3], 
-                            [self.eventos[4]]], 
+                            [self.eventos[3]], 
+                            [self.eventos[4]], 
                             [self.eventos[5]], 
                             [[hora_comienzo_limpieza, tiempo_demora_limpieza, self.reloj + tiempo_demora_limpieza]]] 
             elif self.reloj == self.eventos[5][2]:
@@ -128,8 +129,8 @@ class Fila:
                 self.eventos = [[self.eventos[0]], 
                             [self.eventos[1]], 
                             [self.eventos[2]],
-                            [self.eventos[3], 
-                            [self.eventos[4]]], 
+                            [self.eventos[3]], 
+                            [self.eventos[4]], 
                             [self.eventos[5]], 
                             [[hora_comienzo_limpieza, tiempo_demora_limpieza, self.reloj + tiempo_demora_limpieza]]] 
 
