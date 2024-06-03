@@ -113,11 +113,25 @@ class Fila:
                             [self.eventos[5]], 
                             [[hora_comienzo_limpieza, tiempo_demora_limpieza, self.reloj + tiempo_demora_limpieza]]] 
             elif self.reloj == self.eventos[4][2]:
-                rnd_ocupacion_basquet = random.Random()
-                fin_ocupacion_basquet  = self.distribucion_uniforme(rnd_ocupacion_basquet, fin_ocupacion_basquet_inf,fin_ocupacion_basquet_sup)
+                hora_comienzo_limpieza = self.reloj
+                self.nombre_evento = "Fin de ocupacion cancha de handball"
+                self.eventos = [[self.eventos[0]], 
+                            [self.eventos[1]], 
+                            [self.eventos[2]],
+                            [self.eventos[3], 
+                            [self.eventos[4]]], 
+                            [self.eventos[5]], 
+                            [[hora_comienzo_limpieza, tiempo_demora_limpieza, self.reloj + tiempo_demora_limpieza]]] 
             elif self.reloj == self.eventos[5][2]:
-                rnd_ocupacion_handball = random.Random()
-                fin_ocupacion_handball = self.distribucion_uniforme(rnd_ocupacion_handball, fin_ocupacion_handball_inf,fin_ocupacion_handball_sup)
+                hora_comienzo_limpieza = self.reloj
+                self.nombre_evento = "Fin de ocupacion cancha de handball"
+                self.eventos = [[self.eventos[0]], 
+                            [self.eventos[1]], 
+                            [self.eventos[2]],
+                            [self.eventos[3], 
+                            [self.eventos[4]]], 
+                            [self.eventos[5]], 
+                            [[hora_comienzo_limpieza, tiempo_demora_limpieza, self.reloj + tiempo_demora_limpieza]]] 
 
             elif self.reloj == self.eventos[6][2]:
                 pass
