@@ -60,7 +60,7 @@ class Fila:
                             [self.eventos[1]], 
                             [self.eventos[2]],
                             [[rnd_ocupacion_futbol, fin_ocupacion_futbol, self.reloj + fin_ocupacion_futbol]], 
-                            [self.eventos[3]], [self.eventos[4]], [self.eventos[5]]]
+                            [self.eventos[4]], [self.eventos[5]], [self.eventos[6]]]
                 else:
                     self.colaFyH.append("Futbol")
             elif self.reloj == self.eventos[1][2]:
@@ -75,7 +75,7 @@ class Fila:
                             [self.eventos[2]],
                             [self.eventos[3], 
                             [rnd_ocupacion_basquet, fin_ocupacion_basquet, self.reloj + fin_ocupacion_basquet]], 
-                            [self.eventos[4]], [self.eventos[5]]]
+                            [self.eventos[5]], [self.eventos[6]]]
                 else:
                     self.colaB.append("Basquet")
                 self.nombre_evento = "Llegada Equipo de BasquetBall"
@@ -103,8 +103,15 @@ class Fila:
                 self.nombre_evento = "Llegada Equipo de Hanball"
                 ################
             elif self.reloj == self.eventos[3][2]:
-                rnd_ocupacion_futbol = random.Random()
-                fin_ocupacion_futbol = self.distribucion_uniforme(rnd_ocupacion_futbol, fin_ocupacion_futbol_inf,fin_ocupacion_futbol_sup)
+                hora_comienzo_limpieza = self.reloj
+                self.nombre_evento = "Fin de ocupacion cancha de futbol"
+                self.eventos = [[self.eventos[0]], 
+                            [self.eventos[1]], 
+                            [self.eventos[2]],
+                            [self.eventos[3], 
+                            [self.eventos[4]]], 
+                            [self.eventos[5]], 
+                            [[hora_comienzo_limpieza, tiempo_demora_limpieza, self.reloj + tiempo_demora_limpieza]]] 
             elif self.reloj == self.eventos[4][2]:
                 rnd_ocupacion_basquet = random.Random()
                 fin_ocupacion_basquet  = self.distribucion_uniforme(rnd_ocupacion_basquet, fin_ocupacion_basquet_inf,fin_ocupacion_basquet_sup)
