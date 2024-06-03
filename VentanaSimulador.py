@@ -42,6 +42,7 @@ class Fila:
                             [rnd_llegada_handball, llegada_handball, self.reloj + llegada_handball],
                             [None, None, None], [None, None, None], [None, None, None], [None, None, None]]
             reloj = min((evento[2] for evento in self.eventos if evento[2] is not None), default=None)
+            print(reloj)
             return [reloj, self.eventos, self.estado_cancha, self.colaB, self.colaFyH, self.tiempo_espera_futbol, self.tiempo_espera_basquetball, self.tiempo_espera_handball, self.tiempo_espera_ocupacion_limpieza]
         else:
             self.eventos = eventos
@@ -226,7 +227,7 @@ class VentanaSimulador:
                 lista = fila.simular(datos)
                 tabla.append(fila)
             else:
-                fila = Fila(i+1)
+                fila = Fila(i+1, lista[0])
                 lista = fila.simular(datos, lista[0], lista[1], lista[2], lista[3], lista[4], lista[5], lista[6], lista[7], lista[8])
                 tabla.append(fila)
 
