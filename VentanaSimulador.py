@@ -42,7 +42,6 @@ class Fila:
                             [rnd_llegada_handball, llegada_handball, self.reloj + llegada_handball],
                             [None, None, None], [None, None, None], [None, None, None], [None, None, None]]
             reloj = min((evento[2] for evento in self.eventos if evento[2] is not None), default=None)
-            print(reloj)
             return [reloj, self.eventos, self.estado_cancha, self.colaB, self.colaFyH, self.tiempo_espera_futbol, self.tiempo_espera_basquetball, self.tiempo_espera_handball, self.tiempo_espera_ocupacion_limpieza]
         else:
             self.eventos = eventos
@@ -63,13 +62,13 @@ class Fila:
                 self.nombre_evento = "Llegada Equipo de Futbol"
                 if self.estado_cancha == "Cancha Libre":
                     self.estado_cancha = "Cancha ocupada"
-                    rnd_ocupacion_futbol = random.Random()
+                    rnd_ocupacion_futbol = random.random()
                     fin_ocupacion_futbol = self.distribucion_uniforme(rnd_ocupacion_futbol, fin_ocupacion_futbol_inf,fin_ocupacion_futbol_sup)
                     self.eventos = [[rnd_llegada_futbol, llegada_futbol, self.reloj + llegada_futbol], 
-                            [self.eventos[1]], 
-                            [self.eventos[2]],
+                            self.eventos[1], 
+                            self.eventos[2],
                             [rnd_ocupacion_futbol, fin_ocupacion_futbol, self.reloj + fin_ocupacion_futbol], 
-                            [self.eventos[4]], [self.eventos[5]], [self.eventos[6]]]
+                            self.eventos[4], self.eventos[5], self.eventos[6]]
                 else:
                     self.colaFyH.append("Futbol")
             elif self.reloj == self.eventos[1][2]:
@@ -77,14 +76,14 @@ class Fila:
                 llegada_basquet = self.distribucion_uniforme(rnd_llegada_basquet, intervalo_llegada_basquet_inf, intervalo_llegada_basquet_sup)
                 if self.estado_cancha == "Cancha Libre":
                     self.estado_cancha = "Cancha ocupada"
-                    rnd_ocupacion_basquet = random.Random()
+                    rnd_ocupacion_basquet = random.random()
                     fin_ocupacion_basquet  = self.distribucion_uniforme(rnd_ocupacion_basquet, fin_ocupacion_basquet_inf,fin_ocupacion_basquet_sup)
-                    self.eventos = [[self.eventos[0]], 
+                    self.eventos = [self.eventos[0], 
                             [rnd_llegada_basquet, llegada_basquet, self.reloj + llegada_basquet], 
-                            [self.eventos[2]],
-                            [self.eventos[3]], 
+                            self.eventos[2],
+                            self.eventos[3], 
                             [rnd_ocupacion_basquet, fin_ocupacion_basquet, self.reloj + fin_ocupacion_basquet], 
-                            [self.eventos[5]], [self.eventos[6]]]
+                            self.eventos[5], self.eventos[6]]
                 else:
                     self.colaB.append("Basquet")
                 self.nombre_evento = "Llegada Equipo de BasquetBall"
@@ -99,15 +98,15 @@ class Fila:
 
                 if self.estado_cancha == "Cancha Libre":
                     self.estado_cancha = "Cancha ocupada"
-                    rnd_ocupacion_handball = random.Random()
+                    rnd_ocupacion_handball = random.random()
                     fin_ocupacion_handball  = self.distribucion_uniforme(rnd_ocupacion_handball, fin_ocupacion_handball_inf,fin_ocupacion_handball_sup)
-                    self.eventos = [[self.eventos[0]],
-                            [self.eventos[1]],
+                    self.eventos = [self.eventos[0],
+                            self.eventos[1],
                             [rnd_llegada_handball, llegada_handball, self.reloj + llegada_handball],
-                            [self.eventos[3]],
-                            [self.eventos[4]],
+                            self.eventos[3],
+                            self.eventos[4],
                             [rnd_ocupacion_handball, fin_ocupacion_handball, self.reloj + fin_ocupacion_handball], 
-                            [self.eventos[6]]]
+                            self.eventos[6]]
                 else:
                     self.colaB.append("Hanball")
                 self.nombre_evento = "Llegada Equipo de Hanball"
@@ -115,33 +114,33 @@ class Fila:
             elif self.reloj == self.eventos[3][2]:
                 hora_comienzo_limpieza = self.reloj
                 self.nombre_evento = "Fin de ocupacion cancha de futbol"
-                self.eventos = [[self.eventos[0]], 
-                            [self.eventos[1]], 
-                            [self.eventos[2]],
-                            [self.eventos[3]], 
-                            [self.eventos[4]], 
-                            [self.eventos[5]], 
-                            [[hora_comienzo_limpieza, tiempo_demora_limpieza, self.reloj + tiempo_demora_limpieza]]] 
+                self.eventos = [self.eventos[0], 
+                            self.eventos[1], 
+                            self.eventos[2],
+                            self.eventos[3], 
+                            self.eventos[4], 
+                            self.eventos[5], 
+                            [hora_comienzo_limpieza, tiempo_demora_limpieza, self.reloj + tiempo_demora_limpieza]] 
             elif self.reloj == self.eventos[4][2]:
                 hora_comienzo_limpieza = self.reloj
                 self.nombre_evento = "Fin de ocupacion cancha de basquetball"
-                self.eventos = [[self.eventos[0]], 
-                            [self.eventos[1]], 
-                            [self.eventos[2]],
-                            [self.eventos[3]], 
-                            [self.eventos[4]], 
-                            [self.eventos[5]], 
-                            [[hora_comienzo_limpieza, tiempo_demora_limpieza, self.reloj + tiempo_demora_limpieza]]] 
+                self.eventos = [self.eventos[0], 
+                            self.eventos[1], 
+                            self.eventos[2],
+                            self.eventos[3], 
+                            self.eventos[4], 
+                            self.eventos[5], 
+                            [hora_comienzo_limpieza, tiempo_demora_limpieza, self.reloj + tiempo_demora_limpieza]] 
             elif self.reloj == self.eventos[5][2]:
                 hora_comienzo_limpieza = self.reloj
                 self.nombre_evento = "Fin de ocupacion cancha de handball"
-                self.eventos = [[self.eventos[0]], 
-                            [self.eventos[1]], 
-                            [self.eventos[2]],
-                            [self.eventos[3]], 
-                            [self.eventos[4]], 
-                            [self.eventos[5]], 
-                            [[hora_comienzo_limpieza, tiempo_demora_limpieza, self.reloj + tiempo_demora_limpieza]]] 
+                self.eventos = [self.eventos[0], 
+                            self.eventos[1], 
+                            self.eventos[2],
+                            self.eventos[3], 
+                            self.eventos[4], 
+                            self.eventos[5], 
+                            [hora_comienzo_limpieza, tiempo_demora_limpieza, self.reloj + tiempo_demora_limpieza]] 
 
             elif self.reloj == self.eventos[6][2]:
                 if len(self.colaFyH) > 0:
@@ -155,7 +154,7 @@ class Fila:
                 self.tiempo_espera_ocupacion_limpieza += (self.reloj - reloj_anterior)
             return [self.reloj, self.eventos, self.estado_cancha, self.colaB, self.colaFyH, self.tiempo_espera_futbol, self.tiempo_espera_basquetball, self.tiempo_espera_handball, self.tiempo_espera_ocupacion_limpieza]
     def __str__(self):
-        return f"Nombre del evento: {self.nombre_evento}, Reloj: {self.reloj}, Eventos: {self.eventos}, Estado: {self.estado_cancha}, ColaB: {self.colaB}, ColaFyH: {self.colaFyH}"
+        return f"Nombre del evento: {self.nombre_evento}, Reloj: {self.reloj}, Eventos: {self.eventos}, Estado: {self.estado_cancha}, ColaB: {self.colaB}, ColaFyH: {self.colaFyH}\n"
 class VentanaSimulador:
     def __init__(self, root):
         self.root = root
