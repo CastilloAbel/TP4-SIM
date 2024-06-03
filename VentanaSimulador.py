@@ -1,8 +1,10 @@
 #!/usr/bin/python3.11
 import tkinter as tk
-from tkinter import ttk
+from tkinter import Toplevel, ttk
+from tkinter import Scrollbar
 import random
 import math
+
 class Temporal:
     def __init__(self, nombre, estado, hora_llegada):
         self.nombre = nombre
@@ -12,6 +14,7 @@ class Temporal:
         self.estado = estado
     def __str__(self):
         return f"Nombre:{self.nombre}, Estado:{self.estado}, Hora de llegada:{self.hora_llegada}\n"
+
 class Fila:
     def __init__(self, id, reloj=0.0, eventos=[], estado_cancha="Cancha Libre", colaB=[], colaFyH=[],tiempo_espera_futbol=0, tiempo_espera_basquetball=0, tiempo_espera_handball=0, tiempo_espera_ocupacion_limpieza=0) -> None:
         self.id = id
@@ -218,6 +221,7 @@ class Fila:
             return [self.reloj, self.eventos, self.estado_cancha, self.colaB, self.colaFyH, self.tiempo_espera_futbol, self.tiempo_espera_basquetball, self.tiempo_espera_handball, self.tiempo_espera_ocupacion_limpieza]
     def __str__(self):
         return f"Nombre del evento: {self.nombre_evento}, Reloj: {self.reloj}, Eventos: {self.eventos}, Estado: {self.estado_cancha}, ColaB: {self.colaB}, ColaFyH: {self.colaFyH}, Objetos:{self.objetos[0] if len(self.objetos) > 0 else[]}\n"
+
 class VentanaSimulador:
     def __init__(self, root):
         self.root = root
@@ -278,11 +282,12 @@ class VentanaSimulador:
         cantidad_equipos_max = int(params[13])
         cantidad_filas = int(params[14])
         hora_especifica = int(params[15])
-        
+    
         datos = [tiempo_total, tiempo_demora_limpieza, media_llegada_futbol, intervalo_llegada_basquet_inf, intervalo_llegada_basquet_sup, 
-                 intervalo_llegada_handball_inf, intervalo_llegada_handball_sup, fin_ocupacion_futbol_inf, fin_ocupacion_futbol_sup,
-                 fin_ocupacion_basquet_inf, fin_ocupacion_basquet_sup, fin_ocupacion_handball_inf, fin_ocupacion_handball_sup, cantidad_equipos_max]
+             intervalo_llegada_handball_inf, intervalo_llegada_handball_sup, fin_ocupacion_futbol_inf, fin_ocupacion_futbol_sup,
+             fin_ocupacion_basquet_inf, fin_ocupacion_basquet_sup, fin_ocupacion_handball_inf, fin_ocupacion_handball_sup, cantidad_equipos_max]
         tabla = []
+    
         for i in range(cantidad_filas):
             if i == 0:
                 fila = Fila(i+1)
@@ -295,8 +300,81 @@ class VentanaSimulador:
 
         for fila in tabla:
             print(fila)
+
+        # Crear una nueva ventana para mostrar los resultados
+        root_resultados = tk.Tk()
+        resultados_ventana = ResultadosVentana(root_resultados)
+        resultados_ventana.mostrar_resultados(tabla)
+
+class ResultadosVentana:
+    def __init__(self, root ):
+        self.root = root
+        #self.frame = frame
+        self.root.title("Resultados de la Simulación")
+
+        # Crear el Treeview para mostrar los resultados de la simulación
+        self.tree = ttk.Treeview(self.root, columns=("ID", "Evento", "Reloj","rnd_f", "llegada_f","proxima_f", 
+                                "rnd_h", "llegada_h","proxima_h", "rnd_b", "llegada_b","proxima_b",
+                                "rnd_cancha_f", "ocupacion_cancha_f","fin_ocupacion_f",
+                                "rnd_cancha_h", "ocupacion_cancha_h","fin_ocupacion_h",
+                                "rnd_cancha_b", "ocupacion_cancha_b","fin_ocupacion_b",
+                                "tiempo_actual", "demora_limpieza", "fin_limpieza",
+                                "Estado Cancha", "ColaB", "ColaFyH", "Objetos"), show="headings")
+        
+        self.tree.heading("ID", text="ID")
+        self.tree.heading("Evento", text="Evento")
+        self.tree.heading("Reloj", text="Reloj")
+        self.tree.heading("rnd_f", text="rnd_f")
+        self.tree.heading("llegada_f", text="llegada_f")
+        self.tree.heading("proxima_f", text="proxima_f")
+        self.tree.heading("rnd_h", text="rnd_h")
+        self.tree.heading("llegada_h", text="llegada_h")
+        self.tree.heading("proxima_h", text="proxima_h")
+        self.tree.heading("rnd_b", text="rnd_b")
+        self.tree.heading("llegada_b", text="llegada_b")
+        self.tree.heading("proxima_b", text="proxima_b")
+
+        self.tree.heading("rnd_cancha_f", text="rnd_cancha_f")
+        self.tree.heading("ocupacion_cancha_f", text="ocupacion_cancha_f")
+        self.tree.heading("fin_ocupacion_f", text="fin_ocupacion_f")
+
+        self.tree.heading("rnd_cancha_h", text="rnd_cancha_h")
+        self.tree.heading("ocupacion_cancha_h", text="ocupacion_cancha_h")
+        self.tree.heading("fin_ocupacion_h", text="fin_ocupacion_h")
+
+        self.tree.heading("rnd_cancha_b", text="rnd_cancha_b")
+        self.tree.heading("ocupacion_cancha_b", text="ocupacion_cancha_b")
+        self.tree.heading("fin_ocupacion_b", text="fin_ocupacion_b")
+
+        self.tree.heading("tiempo_actual", text="tiempo_actual")
+        self.tree.heading("demora_limpieza", text="demora_limpieza")
+        self.tree.heading("fin_limpieza", text="fin_limpieza")
+
+        self.tree.heading("Estado Cancha", text="Estado Cancha")
+        self.tree.heading("ColaB", text="ColaB")
+        self.tree.heading("ColaFyH", text="ColaFyH")
+        self.tree.heading("Objetos", text="Objetos")
+        self.tree.pack(expand=True, fill=tk.BOTH)
+
+    def mostrar_resultados(self, tabla_resultados):
+        # Limpiar el Treeview antes de insertar nuevos datos
+        for row in self.tree.get_children():
+            self.tree.delete(row)
+
+        # Insertar los datos en el Treeview
+        for fila in tabla_resultados:
+            self.tree.insert("", "end", values=(fila.id, fila.nombre_evento, fila.reloj,
+                                                fila.eventos[0][0], fila.eventos[0][1],fila.eventos[0][2], 
+                                                fila.eventos[1][0], fila.eventos[1][1],fila.eventos[1][2],
+                                                fila.eventos[2][0], fila.eventos[2][1],fila.eventos[2][2],
+                                                fila.eventos[3][0],fila.eventos[3][1], fila.eventos[3][2],
+                                                fila.eventos[4][0],fila.eventos[4][1], fila.eventos[4][2],
+                                                fila.eventos[5][0],fila.eventos[5][1], fila.eventos[5][2],
+                                                fila.eventos[6][0],fila.eventos[6][1], fila.eventos[6][2],
+                                                fila.estado_cancha, len(fila.colaB), len(fila.colaFyH), 
+                                                str(fila.objetos[0]) if len(fila.objetos) > 0 else ""))
+
 if __name__ == "__main__":
     root = tk.Tk()
-    app = VentanaSimulador(root)
+    ventana_simulador = VentanaSimulador(root)
     root.mainloop()
-
