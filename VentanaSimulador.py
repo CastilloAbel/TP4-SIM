@@ -28,7 +28,10 @@ class Fila:
         [tiempo_total, tiempo_demora_limpieza, media_llegada_futbol, intervalo_llegada_basquet_inf, intervalo_llegada_basquet_sup, 
                  intervalo_llegada_handball_inf, intervalo_llegada_handball_sup, fin_ocupacion_futbol_inf, fin_ocupacion_futbol_sup,
                  fin_ocupacion_basquet_inf, fin_ocupacion_basquet_sup, fin_ocupacion_handball_inf, fin_ocupacion_handball_sup, cantidad_equipos_max] = datos
-
+        self.eventos = eventos
+        self.reloj = min((evento[2] for evento in self.eventos if evento[2] is not None), default=None)
+        print(self.eventos)
+        print(self.reloj)
         if self.reloj == 0:
             self.nombre_evento = "Inicializacion"
             rnd_llegada_futbol = random.random()
@@ -43,8 +46,13 @@ class Fila:
                             [[None, None, None]], [[None, None, None]], [[None, None, None]], [[None, None, None]]]
             return [self.reloj, self.eventos, self.estado_cancha, self.colaB, self.colaFyH, self.tiempo_espera_futbol, self.tiempo_espera_basquetball, self.tiempo_espera_handball, self.tiempo_espera_ocupacion_limpieza]
         else:
+            self.tiempo_espera_basquetball = tiempo_espera_basquetball
+            self.tiempo_espera_futbol = tiempo_espera_futbol
+            self.tiempo_espera_handball = tiempo_espera_handball
+            self.tiempo_espera_ocupacion_limpieza = tiempo_espera_ocupacion_limpieza
             self.eventos = eventos
-            self.reloj = min(self.eventos[0][2], self.eventos[1][2], self.eventos[2][2], self.eventos[3][2], self.eventos[4][2], self.eventos[5][2], self.eventos[6][2])
+            #self.reloj = min(self.eventos[0][2], self.eventos[1][2], self.eventos[2][2], self.eventos[3][2], self.eventos[4][2], self.eventos[5][2], self.eventos[6][2])
+
             self.colaB = colaB
             self.colaFyH = colaFyH
             self.estado_cancha = estado_cancha
@@ -115,7 +123,7 @@ class Fila:
                             [[hora_comienzo_limpieza, tiempo_demora_limpieza, self.reloj + tiempo_demora_limpieza]]] 
             elif self.reloj == self.eventos[4][2]:
                 hora_comienzo_limpieza = self.reloj
-                self.nombre_evento = "Fin de ocupacion cancha de handball"
+                self.nombre_evento = "Fin de ocupacion cancha de basquetball"
                 self.eventos = [[self.eventos[0]], 
                             [self.eventos[1]], 
                             [self.eventos[2]],
@@ -144,7 +152,7 @@ class Fila:
                 else:
                     self.estado_cancha = "Cancha Libre"
                 self.tiempo_espera_ocupacion_limpieza += (self.reloj - reloj_anterior)
-        return [self.reloj, self.eventos, self.estado_cancha, self.colaB, self.colaFyH, self.tiempo_espera_futbol, self.tiempo_espera_basquetball, self.tiempo_espera_handball, self.tiempo_espera_ocupacion_limpieza]
+            return [self.reloj, self.eventos, self.estado_cancha, self.colaB, self.colaFyH, self.tiempo_espera_futbol, self.tiempo_espera_basquetball, self.tiempo_espera_handball, self.tiempo_espera_ocupacion_limpieza]
     def __str__(self):
         return f"Nombre del evento: {self.nombre_evento}, Reloj: {self.reloj}, Eventos: {self.eventos}, Estado: {self.estado_cancha}, ColaB: {self.colaB}, ColaFyH: {self.colaFyH}"
 class VentanaSimulador:
@@ -218,9 +226,9 @@ class VentanaSimulador:
                 reloj_anterior, eventos, estado_cancha, colaB, colaFyH, tiempo_espera_futbol, tiempo_espera_basquetball, tiempo_espera_handball, tiempo_espera_ocupacion_limpieza = fila.simular(datos)
                 tabla.append(fila)
             else:
-                fil = Fila(i+1)
+                fila = Fila(i+1)
                 reloj_anterior, eventos, estado_cancha, colaB, colaFyH, tiempo_espera_futbol, tiempo_espera_basquetball, tiempo_espera_handball, tiempo_espera_ocupacion_limpieza = fila.simular(datos, reloj_anterior, eventos, estado_cancha, colaB, colaFyH, tiempo_espera_futbol, tiempo_espera_basquetball, tiempo_espera_handball, tiempo_espera_ocupacion_limpieza)
-                tabla.append(fil)
+                tabla.append(fila)
 
         for fila in tabla:
             print(fila)
