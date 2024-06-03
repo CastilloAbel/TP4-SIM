@@ -135,9 +135,16 @@ class Fila:
                             [[hora_comienzo_limpieza, tiempo_demora_limpieza, self.reloj + tiempo_demora_limpieza]]] 
 
             elif self.reloj == self.eventos[6][2]:
-                pass
-
-
+                if len(self.colaFyH) > 0:
+                    self.colaFyH.pop(0)
+                    self.estado_cancha = "Cancha Ocupada"
+                elif len(self.colaB) > 0:
+                    self.colaB.pop(0)
+                    self.estado_cancha = "Cancha Ocupada"
+                else:
+                    self.estado_cancha = "Cancha Libre"
+                self.tiempo_espera_ocupacion_limpieza += (self.reloj - reloj_anterior)
+        return [self.reloj, self.eventos, self.estado_cancha, self.colaB, self.colaFyH, self.tiempo_espera_futbol, self.tiempo_espera_basquetball, self.tiempo_espera_handball, self.tiempo_espera_ocupacion_limpieza]
     def __str__(self):
         return f"Nombre del evento: {self.nombre_evento}, Reloj: {self.reloj}, Eventos: {self.eventos}, Estado: {self.estado_cancha}, ColaB: {self.colaB}, ColaFyH: {self.colaFyH}"
 class VentanaSimulador:
@@ -210,11 +217,13 @@ class VentanaSimulador:
                 fila = Fila(i+1)
                 reloj_anterior, eventos, estado_cancha, colaB, colaFyH, tiempo_espera_futbol, tiempo_espera_basquetball, tiempo_espera_handball, tiempo_espera_ocupacion_limpieza = fila.simular(datos)
                 tabla.append(fila)
-                print(fila)
-            # else:
-            #     fil = Fila(i+1)
-            #     reloj_anterior, eventos, estado_cancha, colaB, colaFyH, tiempo_espera_futbol, tiempo_espera_basquetball, tiempo_espera_handball, tiempo_espera_ocupacion_limpieza = fila.simular(datos, reloj_anterior, eventos, estado_cancha, colaB, colaFyH, tiempo_espera_futbol, tiempo_espera_basquetball, tiempo_espera_handball, tiempo_espera_ocupacion_limpieza)
-            #     tabla.append(fil)
+            else:
+                fil = Fila(i+1)
+                reloj_anterior, eventos, estado_cancha, colaB, colaFyH, tiempo_espera_futbol, tiempo_espera_basquetball, tiempo_espera_handball, tiempo_espera_ocupacion_limpieza = fila.simular(datos, reloj_anterior, eventos, estado_cancha, colaB, colaFyH, tiempo_espera_futbol, tiempo_espera_basquetball, tiempo_espera_handball, tiempo_espera_ocupacion_limpieza)
+                tabla.append(fil)
+
+        for fila in tabla:
+            print(fila)
 if __name__ == "__main__":
     root = tk.Tk()
     app = VentanaSimulador(root)
