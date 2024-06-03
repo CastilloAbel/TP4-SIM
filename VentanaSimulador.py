@@ -86,6 +86,22 @@ class Fila:
                     self.colaFyH.append("Handball")
                 rnd_llegada_handball = random.random()
                 llegada_handball = self.distribucion_uniforme(rnd_llegada_handball, intervalo_llegada_handball_inf, intervalo_llegada_handball_sup)
+                ################
+
+                if self.estado_cancha == "Cancha Libre":
+                    self.estado_cancha = "Cancha ocupada"
+                    rnd_ocupacion_handball = random.Random()
+                    fin_ocupacion_handball  = self.distribucion_uniforme(rnd_ocupacion_handball, fin_ocupacion_handball_inf,fin_ocupacion_handball_sup)
+                    self.eventos = [[self.eventos[0]],
+                            [rnd_llegada_handball, llegada_handball, self.reloj + llegada_handball],
+                            [self.eventos[2]],
+                            [self.eventos[3],
+                            [rnd_ocupacion_handball, fin_ocupacion_handball, self.reloj + fin_ocupacion_handball]],
+                            [self.eventos[4]], [self.eventos[5]]]
+                else:
+                    self.colaB.append("Hanball")
+                self.nombre_evento = "Llegada Equipo de Hanball"
+                ################
             elif self.reloj == self.eventos[3][2]:
                 rnd_ocupacion_futbol = random.Random()
                 fin_ocupacion_futbol = self.distribucion_uniforme(rnd_ocupacion_futbol, fin_ocupacion_futbol_inf,fin_ocupacion_futbol_sup)
@@ -95,6 +111,7 @@ class Fila:
             elif self.reloj == self.eventos[5][2]:
                 rnd_ocupacion_handball = random.Random()
                 fin_ocupacion_handball = self.distribucion_uniforme(rnd_ocupacion_handball, fin_ocupacion_handball_inf,fin_ocupacion_handball_sup)
+
             elif self.reloj == self.eventos[6][2]:
                 pass
 
