@@ -2,7 +2,76 @@ import tkinter as tk
 from tkinter import ttk
 import random
 import heapq
+import math
+class Fila:
+    def __init__(self, id, reloj=0.0, eventos=[], estado_cancha="Cancha Libre", cola=[], tiempo_espera_futbol=0, tiempo_espera_basquetball=0, tiempo_espera_handball=0, tiempo_espera_ocupacion_limpieza=0) -> None:
+        self.id = id
+        self.nombre_evento = ""
+        self.reloj = reloj
+        self.eventos = eventos
+        self.estado_cancha = estado_cancha
+        self.cola = cola
+        self.tiempo_espera_futbol = tiempo_espera_futbol
+        self.tiempo_espera_basquetball = tiempo_espera_basquetball
+        self.tiempo_espera_handball = tiempo_espera_handball
+        self.tiempo_espera_ocupacion_limpieza = tiempo_espera_ocupacion_limpieza
+        self.objetos = []
+    
+    def distribucion_exponencial(self, rnd, media):
+        return (-1 * media) * math.log(1 - rnd)
+    
+    def distribucion_uniforme(self, rnd, inf, sup):
+        return inf + (sup - inf) * rnd
+    def simular(self, datos, reloj_anterior=0, eventos=[], estado_cancha="", tiempo_espera_futbol=0, tiempo_espera_basquetball=0, tiempo_espera_handball=0, tiempo_espera_ocupacion_limpieza=0):
+        
+        [tiempo_total, tiempo_demora_limpieza, media_llegada_futbol, intervalo_llegada_basquet_inf, intervalo_llegada_basquet_sup, 
+                 intervalo_llegada_handball_inf, intervalo_llegada_handball_sup, fin_ocupacion_futbol_inf, fin_ocupacion_futbol_sup,
+                 fin_ocupacion_basquet_inf, fin_ocupacion_basquet_sup, fin_ocupacion_handball_inf, fin_ocupacion_handball_sup, cantidad_equipos_max] = datos
 
+        if self.reloj == 0:
+            self.nombre_evento = "Inicializacion"
+            rnd_llegada_futbol = random.random()
+            llegada_futbol = self.distribucion_exponencial(rnd_llegada_futbol, media_llegada_futbol)
+            rnd_llegada_basquet = random.random()
+            llegada_basquet = self.distribucion_uniforme(rnd_llegada_basquet, intervalo_llegada_basquet_inf, intervalo_llegada_basquet_sup)
+            rnd_llegada_handball = random.random()
+            llegada_handball = self.distribucion_uniforme(rnd_llegada_handball, intervalo_llegada_handball_inf, intervalo_llegada_handball_sup)
+            self.eventos = [[rnd_llegada_futbol, llegada_futbol, self.reloj + llegada_futbol], 
+                            [rnd_llegada_basquet, llegada_basquet, self.reloj + llegada_basquet], 
+                            [rnd_llegada_handball, llegada_handball, self.reloj + llegada_handball],
+                            [[None, None, None]], [[None, None, None]], [[None, None, None]], [[None, None, None]]]
+            return [self.reloj, self.eventos, self.estado_cancha, self.cola, self.tiempo_espera_futbol, self.tiempo_espera_basquetball, self.tiempo_espera_handball, self.tiempo_espera_ocupacion_limpieza]
+        else:
+            self.reloj = min(self.eventos[0][2], self.eventos[1][2], self.eventos[2][2], self.eventos[3][2], self.eventos[4][2], self.eventos[5][2], self.eventos[6][2])
+            rnd_ocupacion_futbol = random.Random()
+            fin_ocupacion_futbol = self.distribucion_uniforme(rnd_ocupacion_futbol, fin_ocupacion_futbol_inf,fin_ocupacion_futbol_sup)
+            
+            rnd_ocupacion_basquet = random.Random()
+            fin_ocupacion_basquet  = self.distribucion_uniforme(rnd_ocupacion_basquet, fin_ocupacion_basquet_inf,fin_ocupacion_basquet_sup)
+            
+            rnd_ocupacion_handball = random.Random()
+            fin_ocupacion_handball = self.distribucion_uniforme(rnd_ocupacion_handball, fin_ocupacion_handball_inf,fin_ocupacion_handball_sup)
+            if self.reloj == self.eventos[0][2]:
+                rnd_llegada_futbol = random.random()
+                llegada_futbol = self.distribucion_exponencial(rnd_llegada_futbol, media_llegada_futbol)
+            elif self.reloj == self.eventos[1][2]:
+                rnd_llegada_basquet = random.random()
+                llegada_basquet = self.distribucion_uniforme(rnd_llegada_basquet, intervalo_llegada_basquet_inf, intervalo_llegada_basquet_sup)
+            elif self.reloj == self.eventos[2][2]:
+                rnd_llegada_handball = random.random()
+                llegada_handball = self.distribucion_uniforme(rnd_llegada_handball, intervalo_llegada_handball_inf, intervalo_llegada_handball_sup)
+            elif self.reloj == self.eventos[3][2]:
+                pass
+            elif self.reloj == self.eventos[4][2]:
+                pass
+            elif self.reloj == self.eventos[5][2]:
+                pass
+            elif self.reloj == self.eventos[6][2]:
+                pass
+
+
+    def __str__(self):
+        return f"Nombre del evento: {self.nombre_evento}, Reloj: {self.reloj}, Eventos: {self.eventos}, Estado: {self.estado_cancha}, Cola: {self.cola}"
 class VentanaSimulador:
     def __init__(self, root):
         self.root = root
@@ -63,11 +132,23 @@ class VentanaSimulador:
         cantidad_equipos_max = int(params[13])
         cantidad_filas = int(params[14])
         hora_especifica = int(params[15])
-
         
-
-
+        datos = [tiempo_total, tiempo_demora_limpieza, media_llegada_futbol, intervalo_llegada_basquet_inf, intervalo_llegada_basquet_sup, 
+                 intervalo_llegada_handball_inf, intervalo_llegada_handball_sup, fin_ocupacion_futbol_inf, fin_ocupacion_futbol_sup,
+                 fin_ocupacion_basquet_inf, fin_ocupacion_basquet_sup, fin_ocupacion_handball_inf, fin_ocupacion_handball_sup, cantidad_equipos_max]
+        tabla = []
+        for i in range(cantidad_filas):
+            if i == 0:
+                fila = Fila(i+1)
+                reloj_anterior, eventos, estado_cancha, cola, tiempo_espera_futbol, tiempo_espera_basquetball, tiempo_espera_handball, tiempo_espera_ocupacion_limpieza = fila.simular(datos)
+                tabla.append(fila)
+                print(fila)
+            # else:
+            #     fil = Fila(i+1)
+            #     reloj_anterior, eventos, estado_cancha, cola, tiempo_espera_futbol, tiempo_espera_basquetball, tiempo_espera_handball, tiempo_espera_ocupacion_limpieza = fila.simular(datos, reloj_anterior, eventos, estado_cancha, cola, tiempo_espera_futbol, tiempo_espera_basquetball, tiempo_espera_handball, tiempo_espera_ocupacion_limpieza)
+            #     tabla.append(fil)
 if __name__ == "__main__":
     root = tk.Tk()
     app = VentanaSimulador(root)
     root.mainloop()
+
