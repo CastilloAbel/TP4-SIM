@@ -85,23 +85,23 @@ class Fila:
                         rnd_ocupacion_futbol = random.random()
                         fin_ocupacion_futbol = self.distribucion_uniforme(rnd_ocupacion_futbol, fin_ocupacion_futbol_inf,fin_ocupacion_futbol_sup)
                         self.eventos = [[rnd_llegada_futbol, llegada_futbol, self.reloj + llegada_futbol], 
-                                self.eventos[1], 
-                                self.eventos[2],
-                                [rnd_ocupacion_futbol, fin_ocupacion_futbol, self.reloj + fin_ocupacion_futbol], 
-                                self.eventos[4], self.eventos[5], self.eventos[6]]
+                                        self.eventos[1], 
+                                        self.eventos[2],
+                                        [rnd_ocupacion_futbol, fin_ocupacion_futbol, self.reloj + fin_ocupacion_futbol], 
+                                        self.eventos[4], self.eventos[5], self.eventos[6]]
                     else:
                         self.colaFyH.append(self.equipo_futbol("Futbol", "Esperando Jugar", self.reloj))
                         self.eventos = [[rnd_llegada_futbol, llegada_futbol, self.reloj + llegada_futbol], 
-                                self.eventos[1], 
-                                self.eventos[2],
-                                self.eventos[3], 
-                                self.eventos[4], self.eventos[5], self.eventos[6]]
+                                        self.eventos[1], 
+                                        self.eventos[2],
+                                        self.eventos[3], 
+                                        self.eventos[4], self.eventos[5], self.eventos[6]]
                 else:
                     self.eventos = [[rnd_llegada_futbol, llegada_futbol, self.reloj + llegada_futbol], 
-                                self.eventos[1], 
-                                self.eventos[2],
-                                self.eventos[3], 
-                                self.eventos[4], self.eventos[5], self.eventos[6]]
+                                    self.eventos[1], 
+                                    self.eventos[2],
+                                    self.eventos[3], 
+                                    self.eventos[4], self.eventos[5], self.eventos[6]]
             elif self.reloj == self.eventos[1][2]:
                 rnd_llegada_basquet = random.random()
                 llegada_basquet = self.distribucion_uniforme(rnd_llegada_basquet, intervalo_llegada_basquet_inf, intervalo_llegada_basquet_sup)
@@ -113,26 +113,26 @@ class Fila:
                         rnd_ocupacion_basquet = random.random()
                         fin_ocupacion_basquet  = self.distribucion_uniforme(rnd_ocupacion_basquet, fin_ocupacion_basquet_inf,fin_ocupacion_basquet_sup)
                         self.eventos = [self.eventos[0], 
-                                [rnd_llegada_basquet, llegada_basquet, self.reloj + llegada_basquet], 
-                                self.eventos[2],
-                                self.eventos[3], 
-                                [rnd_ocupacion_basquet, fin_ocupacion_basquet, self.reloj + fin_ocupacion_basquet], 
-                                self.eventos[5], self.eventos[6]]
+                                        [rnd_llegada_basquet, llegada_basquet, self.reloj + llegada_basquet], 
+                                        self.eventos[2],
+                                        self.eventos[3], 
+                                        [rnd_ocupacion_basquet, fin_ocupacion_basquet, self.reloj + fin_ocupacion_basquet], 
+                                        self.eventos[5], self.eventos[6]]
                     else:
                         self.colaB.append(self.equipo_basquet("Basquet", "Esperando Jugar", self.reloj))
                         self.eventos = [self.eventos[0], 
-                                [rnd_llegada_basquet, llegada_basquet, self.reloj + llegada_basquet], 
-                                self.eventos[2],
-                                self.eventos[3], 
-                                self.eventos[4], 
-                                self.eventos[5], self.eventos[6]]
+                                        [rnd_llegada_basquet, llegada_basquet, self.reloj + llegada_basquet], 
+                                        self.eventos[2],
+                                        self.eventos[3], 
+                                        self.eventos[4], 
+                                        self.eventos[5], self.eventos[6]]
                 else:
                     self.eventos = [self.eventos[0], 
-                                [rnd_llegada_basquet, llegada_basquet, self.reloj + llegada_basquet], 
-                                self.eventos[2],
-                                self.eventos[3], 
-                                self.eventos[4], 
-                                self.eventos[5], self.eventos[6]]
+                                    [rnd_llegada_basquet, llegada_basquet, self.reloj + llegada_basquet], 
+                                    self.eventos[2],
+                                    self.eventos[3], 
+                                    self.eventos[4], 
+                                    self.eventos[5], self.eventos[6]]
             elif self.reloj == self.eventos[2][2]:
                 rnd_llegada_handball = random.random()
                 llegada_handball = self.distribucion_uniforme(rnd_llegada_handball, intervalo_llegada_handball_inf, intervalo_llegada_handball_sup)
@@ -144,62 +144,62 @@ class Fila:
                         rnd_ocupacion_handball = random.random()
                         fin_ocupacion_handball  = self.distribucion_uniforme(rnd_ocupacion_handball, fin_ocupacion_handball_inf,fin_ocupacion_handball_sup)
                         self.eventos = [self.eventos[0],
-                                self.eventos[1],
-                                [rnd_llegada_handball, llegada_handball, self.reloj + llegada_handball],
-                                self.eventos[3],
-                                self.eventos[4],
-                                [rnd_ocupacion_handball, fin_ocupacion_handball, self.reloj + fin_ocupacion_handball], 
-                                self.eventos[6]]
+                                        self.eventos[1],
+                                        [rnd_llegada_handball, llegada_handball, self.reloj + llegada_handball],
+                                        self.eventos[3],
+                                        self.eventos[4],
+                                        [rnd_ocupacion_handball, fin_ocupacion_handball, self.reloj + fin_ocupacion_handball], 
+                                        self.eventos[6]]
                     else:
                         self.colaFyH.append(self.equipo_handball("Handball", "Esperando Jugar", self.reloj))
                         self.eventos = [self.eventos[0],
-                                self.eventos[1],
-                                [rnd_llegada_handball, llegada_handball, self.reloj + llegada_handball],
-                                self.eventos[3],
-                                self.eventos[4],
-                                self.eventos[5], 
-                                self.eventos[6]]
+                                        self.eventos[1],
+                                        [rnd_llegada_handball, llegada_handball, self.reloj + llegada_handball],
+                                        self.eventos[3],
+                                        self.eventos[4],
+                                        self.eventos[5], 
+                                        self.eventos[6]]
                 else:
                     self.eventos = [self.eventos[0],
-                                self.eventos[1],
-                                [rnd_llegada_handball, llegada_handball, self.reloj + llegada_handball],
-                                self.eventos[3],
-                                self.eventos[4],
-                                self.eventos[5], 
-                                self.eventos[6]]
+                                    self.eventos[1],
+                                    [rnd_llegada_handball, llegada_handball, self.reloj + llegada_handball],
+                                    self.eventos[3],
+                                    self.eventos[4],
+                                    self.eventos[5], 
+                                    self.eventos[6]]
             elif self.reloj == self.eventos[3][2]:
                 hora_comienzo_limpieza = self.reloj
                 self.nombre_evento = "Fin de ocupacion cancha de futbol"
                 self.objetos.append(self.personal_limpieza("Personal Limpieza", "Limpiando", self.reloj))
                 self.eventos = [self.eventos[0], 
-                            self.eventos[1], 
-                            self.eventos[2],
-                            [None, None, None], 
-                            [None, None, None], 
-                            [None, None, None], 
-                            [hora_comienzo_limpieza, tiempo_demora_limpieza, self.reloj + tiempo_demora_limpieza]] 
+                                self.eventos[1], 
+                                self.eventos[2],
+                                [None, None, None], 
+                                [None, None, None], 
+                                [None, None, None], 
+                                [hora_comienzo_limpieza, tiempo_demora_limpieza, self.reloj + tiempo_demora_limpieza]] 
             elif self.reloj == self.eventos[4][2]:
                 hora_comienzo_limpieza = self.reloj
                 self.nombre_evento = "Fin de ocupacion cancha de basquetball"
                 self.objetos.append(self.personal_limpieza("Personal Limpieza", "Limpiando", self.reloj))
                 self.eventos = [self.eventos[0], 
-                            self.eventos[1], 
-                            self.eventos[2],
-                            [None, None, None], 
-                            [None, None, None], 
-                            [None, None, None], 
-                            [hora_comienzo_limpieza, tiempo_demora_limpieza, self.reloj + tiempo_demora_limpieza]] 
+                                self.eventos[1], 
+                                self.eventos[2],
+                                [None, None, None], 
+                                [None, None, None], 
+                                [None, None, None], 
+                                [hora_comienzo_limpieza, tiempo_demora_limpieza, self.reloj + tiempo_demora_limpieza]] 
             elif self.reloj == self.eventos[5][2]:
                 hora_comienzo_limpieza = self.reloj
                 self.nombre_evento = "Fin de ocupacion cancha de handball"
                 self.objetos.append(self.personal_limpieza("Personal Limpieza", "Limpiando", self.reloj))
                 self.eventos = [self.eventos[0], 
-                            self.eventos[1], 
-                            self.eventos[2],
-                            [None, None, None], 
-                            [None, None, None], 
-                            [None, None, None], 
-                            [hora_comienzo_limpieza, tiempo_demora_limpieza, self.reloj + tiempo_demora_limpieza]] 
+                                self.eventos[1], 
+                                self.eventos[2],
+                                [None, None, None], 
+                                [None, None, None], 
+                                [None, None, None], 
+                                [hora_comienzo_limpieza, tiempo_demora_limpieza, self.reloj + tiempo_demora_limpieza]] 
 
             elif self.reloj == self.eventos[6][2]:
                 if len(self.colaFyH) > 0:
@@ -214,12 +214,12 @@ class Fila:
                         equipo.set_estado("Jugando")
                         self.objetos.append(equipo)
                         self.eventos = [self.eventos[0], 
-                                self.eventos[1], 
-                                self.eventos[2],
-                                [rnd_ocupacion_futbol, fin_ocupacion_futbol, self.reloj + fin_ocupacion_futbol], 
-                                [None, None, None], 
-                                [None, None, None], 
-                                [None, None, None]]
+                                        self.eventos[1], 
+                                        self.eventos[2],
+                                        [rnd_ocupacion_futbol, fin_ocupacion_futbol, self.reloj + fin_ocupacion_futbol], 
+                                        [None, None, None], 
+                                        [None, None, None], 
+                                        [None, None, None]]
                     elif equipo.nombre == "Handball":
                         rnd_ocupacion_handball = random.random()
                         fin_ocupacion_handball  = self.distribucion_uniforme(rnd_ocupacion_handball, fin_ocupacion_handball_inf,fin_ocupacion_handball_sup)
@@ -227,12 +227,12 @@ class Fila:
                         equipo.set_estado("Jugando")
                         self.objetos.append(equipo)
                         self.eventos = [self.eventos[0],
-                                self.eventos[1],
-                                self.eventos[2],
-                                [None, None, None],
-                                [None, None, None],
-                                [rnd_ocupacion_handball, fin_ocupacion_handball, self.reloj + fin_ocupacion_handball], 
-                                [None, None, None]]
+                                        self.eventos[1],
+                                        self.eventos[2],
+                                        [None, None, None],
+                                        [None, None, None],
+                                        [rnd_ocupacion_handball, fin_ocupacion_handball, self.reloj + fin_ocupacion_handball], 
+                                        [None, None, None]]
                 elif len(self.colaB) > 0:
                     cola = self.colaB
                     equipo = cola.pop(0)
@@ -244,20 +244,20 @@ class Fila:
                     self.objetos.append(equipo)
                     self.tiempo_espera_basquetball += (self.reloj - equipo.hora_llegada)
                     self.eventos = [self.eventos[0], 
-                            self.eventos[1], 
-                            self.eventos[2],
-                            [None, None, None], 
-                            [rnd_ocupacion_basquet, fin_ocupacion_basquet, self.reloj + fin_ocupacion_basquet], 
-                            [None, None, None], [None, None, None]]
+                                    self.eventos[1], 
+                                    self.eventos[2],
+                                    [None, None, None], 
+                                    [rnd_ocupacion_basquet, fin_ocupacion_basquet, self.reloj + fin_ocupacion_basquet], 
+                                    [None, None, None], [None, None, None]]
                 else:
                     self.estado_cancha = "Cancha Libre"
                     self.eventos = [self.eventos[0], 
-                            self.eventos[1], 
-                            self.eventos[2],
-                            [None, None, None], 
-                            [None, None, None], 
-                            [None, None, None], 
-                            [None, None, None]] 
+                                    self.eventos[1], 
+                                    self.eventos[2],
+                                    [None, None, None], 
+                                    [None, None, None], 
+                                    [None, None, None], 
+                                    [None, None, None]] 
                 self.nombre_evento = "Fin de limpieza cancha"
                 self.tiempo_espera_ocupacion_limpieza += tiempo_demora_limpieza
             return [self.reloj, self.eventos, self.estado_cancha, self.colaB, self.colaFyH, self.tiempo_espera_futbol, self.tiempo_espera_basquetball, self.tiempo_espera_handball, self.tiempo_espera_ocupacion_limpieza]
@@ -419,67 +419,74 @@ class ResultadosVentana:
                 return int(numero * factor) / factor
             else:
                 return ""
-                
-
+            
         # Limpiar el Treeview antes de insertar nuevos datos
         for row in self.tree.get_children():
             self.tree.delete(row)
 
-        # Insertar los datos en el Treeview
-        #for line in lista(0:len(cantidad))
-
         if hora_especifica == 0 and cantidad_filas != 0:
             for i, fila in enumerate(tabla_resultados[0:cantidad_filas]):
-
+                if len(fila.objetos) == 2:
+                    objetos = fila.objetos[0] + fila.objetos[1]
+                elif len(fila.objetos) == 1:
+                    objetos = fila.objetos[0]
+                else:
+                    objetos = "Empty"
                 self.tree.insert("", "end", values=(fila.id, fila.nombre_evento, truncar(fila.reloj),
-                                                truncar(fila.eventos[0][0]), truncar(fila.eventos[0][1]),truncar(fila.eventos[0][2]), 
-                                                truncar(fila.eventos[1][0]), truncar(fila.eventos[1][1]),truncar(fila.eventos[1][2]),
-                                                truncar(fila.eventos[2][0]), truncar(fila.eventos[2][1]),truncar(fila.eventos[2][2]),
-                                                truncar(fila.eventos[3][0]),truncar(fila.eventos[3][1]), truncar(fila.eventos[3][2]),
-                                                truncar(fila.eventos[4][0]),truncar(fila.eventos[4][1]), truncar(fila.eventos[4][2]),
-                                                truncar(fila.eventos[5][0]),truncar(fila.eventos[5][1]), truncar(fila.eventos[5][2]),
-                                                truncar(fila.eventos[6][0]),truncar(fila.eventos[6][1]), truncar(fila.eventos[6][2]),
-                                                fila.estado_cancha, colas[i][0], colas[i][1], truncar(fila.tiempo_espera_futbol),
-                                                truncar(fila.tiempo_espera_handball), truncar(fila.tiempo_espera_basquetball),
-                                                truncar(fila.tiempo_espera_ocupacion_limpieza),str(fila.objetos[0]) if len(fila.objetos) > 0 else ""))
+                                truncar(fila.eventos[0][0]), truncar(fila.eventos[0][1]),truncar(fila.eventos[0][2]), 
+                                truncar(fila.eventos[1][0]), truncar(fila.eventos[1][1]),truncar(fila.eventos[1][2]),
+                                truncar(fila.eventos[2][0]), truncar(fila.eventos[2][1]),truncar(fila.eventos[2][2]),
+                                truncar(fila.eventos[3][0]),truncar(fila.eventos[3][1]), truncar(fila.eventos[3][2]),
+                                truncar(fila.eventos[4][0]),truncar(fila.eventos[4][1]), truncar(fila.eventos[4][2]),
+                                truncar(fila.eventos[5][0]),truncar(fila.eventos[5][1]), truncar(fila.eventos[5][2]),
+                                truncar(fila.eventos[6][0]),truncar(fila.eventos[6][1]), truncar(fila.eventos[6][2]),
+                                fila.estado_cancha, colas[i][0], colas[i][1], truncar(fila.tiempo_espera_futbol),
+                                truncar(fila.tiempo_espera_handball), truncar(fila.tiempo_espera_basquetball),
+                                truncar(fila.tiempo_espera_ocupacion_limpieza),objetos if len(fila.objetos) > 0 else ""))
             self.tree.insert("", "end", values=(tabla_resultados[-1].id, tabla_resultados[-1].nombre_evento, truncar(tabla_resultados[-1].reloj),
-                                                truncar(tabla_resultados[-1].eventos[0][0]), truncar(tabla_resultados[-1].eventos[0][1]), truncar(tabla_resultados[-1].eventos[0][2]), 
-                                                truncar(tabla_resultados[-1].eventos[1][0]), truncar(tabla_resultados[-1].eventos[1][1]), truncar(tabla_resultados[-1].eventos[1][2]),
-                                                truncar(tabla_resultados[-1].eventos[2][0]), truncar(tabla_resultados[-1].eventos[2][1]), truncar(tabla_resultados[-1].eventos[2][2]),
-                                                truncar(tabla_resultados[-1].eventos[3][0]), truncar(tabla_resultados[-1].eventos[3][1]), truncar(tabla_resultados[-1].eventos[3][2]),
-                                                truncar(tabla_resultados[-1].eventos[4][0]), truncar(tabla_resultados[-1].eventos[4][1]), truncar(tabla_resultados[-1].eventos[4][2]),
-                                                truncar(tabla_resultados[-1].eventos[5][0]), truncar(tabla_resultados[-1].eventos[5][1]), truncar(tabla_resultados[-1].eventos[5][2]),
-                                                truncar(tabla_resultados[-1].eventos[6][0]), truncar(tabla_resultados[-1].eventos[6][1]), truncar(tabla_resultados[-1].eventos[6][2]),
-                                                tabla_resultados[-1].estado_cancha, colas[-1][0], colas[-1][1], truncar(tabla_resultados[-1].tiempo_espera_futbol),
-                                                truncar(tabla_resultados[-1].tiempo_espera_handball), truncar(tabla_resultados[-1].tiempo_espera_basquetball),
-                                                truncar(tabla_resultados[-1].tiempo_espera_ocupacion_limpieza),str(tabla_resultados[-1].objetos[0]) if len(tabla_resultados[-1].objetos) > 0 else ""))
+                            truncar(tabla_resultados[-1].eventos[0][0]), truncar(tabla_resultados[-1].eventos[0][1]), truncar(tabla_resultados[-1].eventos[0][2]), 
+                            truncar(tabla_resultados[-1].eventos[1][0]), truncar(tabla_resultados[-1].eventos[1][1]), truncar(tabla_resultados[-1].eventos[1][2]),
+                            truncar(tabla_resultados[-1].eventos[2][0]), truncar(tabla_resultados[-1].eventos[2][1]), truncar(tabla_resultados[-1].eventos[2][2]),
+                            truncar(tabla_resultados[-1].eventos[3][0]), truncar(tabla_resultados[-1].eventos[3][1]), truncar(tabla_resultados[-1].eventos[3][2]),
+                            truncar(tabla_resultados[-1].eventos[4][0]), truncar(tabla_resultados[-1].eventos[4][1]), truncar(tabla_resultados[-1].eventos[4][2]),
+                            truncar(tabla_resultados[-1].eventos[5][0]), truncar(tabla_resultados[-1].eventos[5][1]), truncar(tabla_resultados[-1].eventos[5][2]),
+                            truncar(tabla_resultados[-1].eventos[6][0]), truncar(tabla_resultados[-1].eventos[6][1]), truncar(tabla_resultados[-1].eventos[6][2]),
+                            tabla_resultados[-1].estado_cancha, colas[-1][0], colas[-1][1], truncar(tabla_resultados[-1].tiempo_espera_futbol),
+                            truncar(tabla_resultados[-1].tiempo_espera_handball), truncar(tabla_resultados[-1].tiempo_espera_basquetball),
+                            truncar(tabla_resultados[-1].tiempo_espera_ocupacion_limpieza),str(tabla_resultados[-1].objetos[0]) if len(tabla_resultados[-1].objetos) > 0 else ""))
 
                                                 
         elif hora_especifica != 0 and cantidad_filas != 0:
             for i, fila in enumerate(tabla_resultados[0:cantidad_filas]):
+                if len(fila.objetos) == 2:
+                    objetos = fila.objetos[0] + fila.objetos[1]
+                elif len(fila.objetos) == 1:
+                    objetos = fila.objetos[0]
+                else:
+                    objetos = "Empty"
                 if fila.reloj >= hora_especifica:
                     self.tree.insert("", "end", values=(fila.id, fila.nombre_evento, truncar(fila.reloj),
-                                                truncar(fila.eventos[0][0]), truncar(fila.eventos[0][1]), truncar(fila.eventos[0][2]), 
-                                                truncar(fila.eventos[1][0]), truncar(fila.eventos[1][1]), truncar(fila.eventos[1][2]),
-                                                truncar(fila.eventos[2][0]), truncar(fila.eventos[2][1]), truncar(fila.eventos[2][2]),
-                                                truncar(fila.eventos[3][0]), truncar(fila.eventos[3][1]), truncar(fila.eventos[3][2]),
-                                                truncar(fila.eventos[4][0]), truncar(fila.eventos[4][1]), truncar(fila.eventos[4][2]),
-                                                truncar(fila.eventos[5][0]), truncar(fila.eventos[5][1]), truncar(fila.eventos[5][2]),
-                                                truncar(fila.eventos[6][0]), truncar(fila.eventos[6][1]), truncar(fila.eventos[6][2]),
-                                                fila.estado_cancha, colas[i][0], colas[i][1], truncar(fila.tiempo_espera_futbol),
-                                                truncar(fila.tiempo_espera_handball), truncar(fila.tiempo_espera_basquetball),
-                                                truncar(fila.tiempo_espera_ocupacion_limpieza),str(fila.objetos[0]) if len(tabla_resultados[-1].objetos) > 0 else ""))
+                                    truncar(fila.eventos[0][0]), truncar(fila.eventos[0][1]), truncar(fila.eventos[0][2]), 
+                                    truncar(fila.eventos[1][0]), truncar(fila.eventos[1][1]), truncar(fila.eventos[1][2]),
+                                    truncar(fila.eventos[2][0]), truncar(fila.eventos[2][1]), truncar(fila.eventos[2][2]),
+                                    truncar(fila.eventos[3][0]), truncar(fila.eventos[3][1]), truncar(fila.eventos[3][2]),
+                                    truncar(fila.eventos[4][0]), truncar(fila.eventos[4][1]), truncar(fila.eventos[4][2]),
+                                    truncar(fila.eventos[5][0]), truncar(fila.eventos[5][1]), truncar(fila.eventos[5][2]),
+                                    truncar(fila.eventos[6][0]), truncar(fila.eventos[6][1]), truncar(fila.eventos[6][2]),
+                                    fila.estado_cancha, colas[i][0], colas[i][1], truncar(fila.tiempo_espera_futbol),
+                                    truncar(fila.tiempo_espera_handball), truncar(fila.tiempo_espera_basquetball),
+                                    truncar(fila.tiempo_espera_ocupacion_limpieza), objetos if len(tabla_resultados[-1].objetos) > 0 else ""))
             self.tree.insert("", "end", values=(tabla_resultados[-1].id, tabla_resultados[-1].nombre_evento, truncar(fila.reloj),
-                                                truncar(tabla_resultados[-1].eventos[0][0]), truncar(tabla_resultados[-1].eventos[0][1]), truncar(tabla_resultados[-1].eventos[0][2]), 
-                                                truncar(tabla_resultados[-1].eventos[1][0]), truncar(tabla_resultados[-1].eventos[1][1]), truncar(tabla_resultados[-1].eventos[1][2]),
-                                                truncar(tabla_resultados[-1].eventos[2][0]), truncar(tabla_resultados[-1].eventos[2][1]), truncar(tabla_resultados[-1].eventos[2][2]),
-                                                truncar(tabla_resultados[-1].eventos[3][0]), truncar(tabla_resultados[-1].eventos[3][1]), truncar(tabla_resultados[-1].eventos[3][2]),
-                                                truncar(tabla_resultados[-1].eventos[4][0]), truncar(tabla_resultados[-1].eventos[4][1]), truncar(tabla_resultados[-1].eventos[4][2]),
-                                                truncar(tabla_resultados[-1].eventos[5][0]), truncar(tabla_resultados[-1].eventos[5][1]), truncar(tabla_resultados[-1].eventos[5][2]),
-                                                truncar(tabla_resultados[-1].eventos[6][0]), truncar(tabla_resultados[-1].eventos[6][1]), truncar(tabla_resultados[-1].eventos[6][2]),
-                                                tabla_resultados[-1].estado_cancha, colas[-1][0], colas[-1][1], truncar(tabla_resultados[-1].tiempo_espera_futbol),
-                                                truncar(tabla_resultados[-1].tiempo_espera_handball), truncar(tabla_resultados[-1].tiempo_espera_basquetball),
-                                                truncar(tabla_resultados[-1].tiempo_espera_ocupacion_limpieza),str(tabla_resultados[-1].objetos[0]) if len(tabla_resultados[-1].objetos) > 0 else ""))
+                            truncar(tabla_resultados[-1].eventos[0][0]), truncar(tabla_resultados[-1].eventos[0][1]), truncar(tabla_resultados[-1].eventos[0][2]), 
+                            truncar(tabla_resultados[-1].eventos[1][0]), truncar(tabla_resultados[-1].eventos[1][1]), truncar(tabla_resultados[-1].eventos[1][2]),
+                            truncar(tabla_resultados[-1].eventos[2][0]), truncar(tabla_resultados[-1].eventos[2][1]), truncar(tabla_resultados[-1].eventos[2][2]),
+                            truncar(tabla_resultados[-1].eventos[3][0]), truncar(tabla_resultados[-1].eventos[3][1]), truncar(tabla_resultados[-1].eventos[3][2]),
+                            truncar(tabla_resultados[-1].eventos[4][0]), truncar(tabla_resultados[-1].eventos[4][1]), truncar(tabla_resultados[-1].eventos[4][2]),
+                            truncar(tabla_resultados[-1].eventos[5][0]), truncar(tabla_resultados[-1].eventos[5][1]), truncar(tabla_resultados[-1].eventos[5][2]),
+                            truncar(tabla_resultados[-1].eventos[6][0]), truncar(tabla_resultados[-1].eventos[6][1]), truncar(tabla_resultados[-1].eventos[6][2]),
+                            tabla_resultados[-1].estado_cancha, colas[-1][0], colas[-1][1], truncar(tabla_resultados[-1].tiempo_espera_futbol),
+                            truncar(tabla_resultados[-1].tiempo_espera_handball), truncar(tabla_resultados[-1].tiempo_espera_basquetball),
+                            truncar(tabla_resultados[-1].tiempo_espera_ocupacion_limpieza),str(tabla_resultados[-1].objetos[0]) if len(tabla_resultados[-1].objetos) > 0 else ""))
         else:
             self.tree.insert("","end",values="")            
 
