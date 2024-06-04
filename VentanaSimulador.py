@@ -78,7 +78,7 @@ class Fila:
                 rnd_llegada_futbol = random.random()
                 llegada_futbol = self.distribucion_exponencial(rnd_llegada_futbol, media_llegada_futbol)
                 self.nombre_evento = "Llegada Equipo de Futbol"
-                if (len(self.colaFyH) + len(self.colaB) >= cantidad_equipos_max):
+                if (len(self.colaFyH) + len(self.colaB) <= cantidad_equipos_max):
                     if self.estado_cancha == "Cancha Libre":
                         self.estado_cancha = "Cancha ocupada"
                         self.objetos.append(self.equipo_futbol("Futbol","Jugando", self.reloj))
@@ -106,7 +106,7 @@ class Fila:
                 rnd_llegada_basquet = random.random()
                 llegada_basquet = self.distribucion_uniforme(rnd_llegada_basquet, intervalo_llegada_basquet_inf, intervalo_llegada_basquet_sup)
                 self.nombre_evento = "Llegada Equipo de BasquetBall"
-                if (len(self.colaFyH) + len(self.colaB) >= cantidad_equipos_max):
+                if (len(self.colaFyH) + len(self.colaB) <= cantidad_equipos_max):
                     if self.estado_cancha == "Cancha Libre":
                         self.estado_cancha = "Cancha ocupada"
                         self.objetos.append(self.equipo_basquet("Basquet", "Jugando", self.reloj))
@@ -137,7 +137,7 @@ class Fila:
                 rnd_llegada_handball = random.random()
                 llegada_handball = self.distribucion_uniforme(rnd_llegada_handball, intervalo_llegada_handball_inf, intervalo_llegada_handball_sup)
                 self.nombre_evento = "Llegada Equipo de Handball"
-                if (len(self.colaFyH) + len(self.colaB) >= cantidad_equipos_max):
+                if (len(self.colaFyH) + len(self.colaB) <= cantidad_equipos_max):
                     if self.estado_cancha == "Cancha Libre":
                         self.estado_cancha = "Cancha ocupada"
                         self.objetos.append(self.equipo_handball("Handball", "Jugando", self.reloj))
@@ -208,6 +208,8 @@ class Fila:
                     if equipo.nombre == "Futbol":
                         rnd_ocupacion_futbol = random.random()
                         fin_ocupacion_futbol = self.distribucion_uniforme(rnd_ocupacion_futbol, fin_ocupacion_futbol_inf,fin_ocupacion_futbol_sup)
+                        self.tiempo_espera_futbol += (self.reloj - equipo.hora_llegada)
+                        self.objetos.append(equipo)
                         self.eventos = [self.eventos[0], 
                                 self.eventos[1], 
                                 self.eventos[2],
@@ -218,6 +220,8 @@ class Fila:
                     elif equipo.nombre == "Handball":
                         rnd_ocupacion_handball = random.random()
                         fin_ocupacion_handball  = self.distribucion_uniforme(rnd_ocupacion_handball, fin_ocupacion_handball_inf,fin_ocupacion_handball_sup)
+                        self.tiempo_espera_handball += (self.reloj - equipo.hora_llegada)
+                        self.objetos.append(equipo)
                         self.eventos = [self.eventos[0],
                                 self.eventos[1],
                                 self.eventos[2],
@@ -226,10 +230,12 @@ class Fila:
                                 [rnd_ocupacion_handball, fin_ocupacion_handball, self.reloj + fin_ocupacion_handball], 
                                 [None, None, None]]
                 elif len(self.colaB) > 0:
-                    self.colaB.pop(0)
+                    equipo = self.colaB.pop(0)
                     self.estado_cancha = "Cancha Ocupada"
                     rnd_ocupacion_basquet = random.random()
                     fin_ocupacion_basquet  = self.distribucion_uniforme(rnd_ocupacion_basquet, fin_ocupacion_basquet_inf,fin_ocupacion_basquet_sup)
+                    self.objetos.append(equipo)
+                    self.tiempo_espera_basquetball += (self.reloj - equipo.hora_llegada)
                     self.eventos = [self.eventos[0], 
                             self.eventos[1], 
                             self.eventos[2],
