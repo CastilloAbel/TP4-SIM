@@ -14,9 +14,16 @@ class Temporal:
 
     def set_estado(self, estado):
         self.estado = estado
+
+    def truncar(self, numero, decimales=3):
+        if numero is not None:
+            factor = 10 ** decimales
+            return int(numero * factor) / factor
+        else:
+            return ""
     
     def __str__(self):
-        return f"Nombre:{self.nombre}, Estado:{self.estado}, Hora de llegada:{self.hora_llegada}\n"
+        return f"Nombre: {self.nombre}, Estado: {self.estado}, Hora de llegada: {self.truncar(self.hora_llegada)}\n"
 
 class Fila:
     def __init__(self, id, reloj=0.0, eventos=[], estado_cancha="Cancha Libre", colaB=[], colaFyH=[],tiempo_espera_futbol=0, tiempo_espera_basquetball=0, tiempo_espera_handball=0, tiempo_espera_ocupacion_limpieza=0) -> None:
@@ -396,6 +403,8 @@ class ResultadosVentana:
             self.tree.heading(col, text=col)
             self.tree.column(col, width=width, anchor='center')
     
+        self.tree.column("Evento", width=260, anchor='w')
+        self.tree.column("Objetos", width=480, anchor='w')
 
         # Crear los scrollbars y asociarlos con el Treeview
         self.vsb = ttk.Scrollbar(self.frame, orient="vertical", command=self.tree.yview)
@@ -411,8 +420,7 @@ class ResultadosVentana:
 
     def mostrar_resultados(self, tabla_resultados, hora_especifica, cantidad_filas, colas):
 
-        # for fila in tabla_resultados:
-        #     print(fila)
+        # Truncar
         def truncar(numero, decimales=3):
             if numero is not None:
                 factor = 10 ** decimales
