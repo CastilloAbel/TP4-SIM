@@ -331,22 +331,25 @@ class VentanaSimulador:
              fin_ocupacion_basquet_inf, fin_ocupacion_basquet_sup, fin_ocupacion_handball_inf, fin_ocupacion_handball_sup, cantidad_equipos_max]
         tabla = []
     
-        for i in range(cantidad_filas):
+        for i in range(tiempo_total):
             if i == 0:
                 fila = Fila(i+1)
                 lista = fila.simular(datos)
                 tabla.append(fila)
             else:
-                fila = Fila(i+1, lista[0], lista[1], lista[2], lista[3], lista[4], lista[5], lista[6], lista[7], lista[8])
-                lista = fila.simular(datos)
-                tabla.append(fila)
+                if fila.reloj >= tiempo_total:
+                    break
+                else:
+                    fila = Fila(i+1, lista[0], lista[1], lista[2], lista[3], lista[4], lista[5], lista[6], lista[7], lista[8])
+                    lista = fila.simular(datos)
+                    tabla.append(fila)
         
 
 
         # Crear una nueva ventana para mostrar los resultados
         root_resultados = tk.Tk()
         resultados_ventana = ResultadosVentana(root_resultados)
-        resultados_ventana.mostrar_resultados(tabla, hora_especifica)
+        resultados_ventana.mostrar_resultados(tabla, hora_especifica, cantidad_filas)
 
 
 
@@ -400,7 +403,7 @@ class ResultadosVentana:
 
 
 
-    def mostrar_resultados(self, tabla_resultados, hora_especifica):
+    def mostrar_resultados(self, tabla_resultados, hora_especifica, cantidad_filas):
 
         def truncar(numero, decimales=3):
             if numero is not None:
@@ -415,9 +418,10 @@ class ResultadosVentana:
             self.tree.delete(row)
 
         # Insertar los datos en el Treeview
+        #for line in lista(0:len(cantidad))
 
-        if hora_especifica == 0:
-            for fila in tabla_resultados:
+        if hora_especifica == 0 and cantidad_filas != 0:
+            for fila in tabla_resultados[0:cantidad_filas]:
                 self.tree.insert("", "end", values=(fila.id, fila.nombre_evento, truncar(fila.reloj),
                                                 truncar(fila.eventos[0][0]), truncar(fila.eventos[0][1]),truncar(fila.eventos[0][2]), 
                                                 truncar(fila.eventos[1][0]), truncar(fila.eventos[1][1]),truncar(fila.eventos[1][2]),
@@ -430,8 +434,8 @@ class ResultadosVentana:
                                                 truncar(fila.tiempo_espera_handball), truncar(fila.tiempo_espera_basquetball),
                                                 truncar(fila.tiempo_espera_ocupacion_limpieza),str(fila.objetos[0]) if len(fila.objetos) > 0 else ""))
                                                 
-        else:
-            for fila in tabla_resultados:
+        elif hora_especifica != 0 and cantidad_filas != 0:
+            for fila in tabla_resultados[0:cantidad_filas]:
                 if fila.reloj >= hora_especifica:
                     self.tree.insert("", "end", values=(fila.id, fila.nombre_evento, truncar(fila.reloj),
                                                 truncar(fila.eventos[0][0]), truncar(fila.eventos[0][1]), truncar(fila.eventos[0][2]), 
@@ -444,6 +448,8 @@ class ResultadosVentana:
                                                 fila.estado_cancha, len(fila.colaB), len(fila.colaFyH), truncar(fila.tiempo_espera_futbol),
                                                 truncar(fila.tiempo_espera_handball), truncar(fila.tiempo_espera_basquetball),
                                                 truncar(fila.tiempo_espera_ocupacion_limpieza),str(fila.objetos[0]) if len(fila.objetos) > 0 else ""))
+        else:
+            self.tree.insert("","end",values="")            
 
 if __name__ == "__main__":
     root = tk.Tk()
