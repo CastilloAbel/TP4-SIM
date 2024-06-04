@@ -12,8 +12,6 @@ class Temporal:
         self.estado = estado
         self.hora_llegada = hora_llegada
 
-    
-
     def set_estado(self, estado):
         self.estado = estado
     
@@ -50,6 +48,7 @@ class Fila:
         return (-1 * media) * math.log(1 - rnd)
     def distribucion_uniforme(self, rnd, inf, sup):
         return inf + (sup - inf) * rnd
+    
     def simular(self, datos):
         
         [tiempo_total, tiempo_demora_limpieza, media_llegada_futbol, intervalo_llegada_basquet_inf, intervalo_llegada_basquet_sup, 
@@ -308,15 +307,18 @@ class VentanaSimulador:
                 fila = Fila(i+1, lista[0], lista[1], lista[2], lista[3], lista[4], lista[5], lista[6], lista[7], lista[8])
                 lista = fila.simular(datos)
                 tabla.append(fila)
-
-        for fila in tabla:
-            for objeto in fila.objetos:
-                print(objeto) 
+        
+        print(lista[5])
+        print(lista[6])
+        print(lista[7])
+        print(lista[8])
 
         # Crear una nueva ventana para mostrar los resultados
         root_resultados = tk.Tk()
         resultados_ventana = ResultadosVentana(root_resultados)
         resultados_ventana.mostrar_resultados(tabla, hora_especifica)
+
+
 
 class ResultadosVentana:
     def __init__(self, root ):
@@ -335,7 +337,8 @@ class ResultadosVentana:
                                 "rnd_cancha_h", "ocupacion_cancha_h","fin_ocupacion_h",
                                 "rnd_cancha_b", "ocupacion_cancha_b","fin_ocupacion_b",
                                 "tiempo_actual", "demora_limpieza", "fin_limpieza",
-                                "Estado Cancha", "ColaB", "ColaFyH", "Objetos"), show="headings")
+                                "Estado Cancha", "ColaB", "ColaFyH","Tiempo_espera_f",
+                                "Tiempo_espera_h","Tiempo_espera_b","Tiempo_ocupacion_limpieza" ,"Objetos"), show="headings")
         
         # Configurar encabezados y anchos de columna
         columns = [
@@ -345,7 +348,9 @@ class ResultadosVentana:
             ("rnd_cancha_h", 150), ("ocupacion_cancha_h", 150), ("fin_ocupacion_h", 150),
             ("rnd_cancha_b", 150), ("ocupacion_cancha_b", 150), ("fin_ocupacion_b", 150),
             ("tiempo_actual", 150), ("demora_limpieza", 150), ("fin_limpieza", 150),
-            ("Estado Cancha", 100), ("ColaB", 60), ("ColaFyH", 60), ("Objetos", 500)
+            ("Estado Cancha", 100), ("ColaB", 60), ("ColaFyH", 60),("Tiempo_espera_f",150),
+            ("Tiempo_espera_h",150),("Tiempo_espera_b",150),("Tiempo_ocupacion_limpieza",150)
+            ,("Objetos", 500)
         ]
 
         for col, width in columns:
@@ -391,8 +396,10 @@ class ResultadosVentana:
                                                 truncar(fila.eventos[4][0]),truncar(fila.eventos[4][1]), truncar(fila.eventos[4][2]),
                                                 truncar(fila.eventos[5][0]),truncar(fila.eventos[5][1]), truncar(fila.eventos[5][2]),
                                                 truncar(fila.eventos[6][0]),truncar(fila.eventos[6][1]), truncar(fila.eventos[6][2]),
-                                                fila.estado_cancha, len(fila.colaB), len(fila.colaFyH), 
-                                                str(fila.objetos[0]) if len(fila.objetos) > 0 else ""))
+                                                fila.estado_cancha, len(fila.colaB), len(fila.colaFyH), truncar(fila.tiempo_espera_futbol),
+                                                truncar(fila.tiempo_espera_handball), truncar(fila.tiempo_espera_basquetball),
+                                                truncar(fila.tiempo_espera_ocupacion_limpieza),str(fila.objetos[0]) if len(fila.objetos) > 0 else ""))
+                                                
         else:
             for fila in tabla_resultados:
                 if fila.reloj >= hora_especifica:
@@ -404,8 +411,9 @@ class ResultadosVentana:
                                                 truncar(fila.eventos[4][0]), truncar(fila.eventos[4][1]), truncar(fila.eventos[4][2]),
                                                 truncar(fila.eventos[5][0]), truncar(fila.eventos[5][1]), truncar(fila.eventos[5][2]),
                                                 truncar(fila.eventos[6][0]), truncar(fila.eventos[6][1]), truncar(fila.eventos[6][2]),
-                                                fila.estado_cancha, len(fila.colaB), len(fila.colaFyH), 
-                                                str(fila.objetos[0]) if len(fila.objetos) > 0 else ""))
+                                                fila.estado_cancha, len(fila.colaB), len(fila.colaFyH), truncar(fila.tiempo_espera_futbol),
+                                                truncar(fila.tiempo_espera_handball), truncar(fila.tiempo_espera_basquetball),
+                                                truncar(fila.tiempo_espera_ocupacion_limpieza),str(fila.objetos[0]) if len(fila.objetos) > 0 else ""))
 
 if __name__ == "__main__":
     root = tk.Tk()
