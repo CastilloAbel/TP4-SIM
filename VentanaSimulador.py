@@ -1,4 +1,3 @@
-#!/usr/bin/python3.11
 import tkinter as tk
 from tkinter import Toplevel, ttk
 from tkinter import Scrollbar
