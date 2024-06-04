@@ -349,7 +349,7 @@ class ResultadosVentana:
             ("rnd_cancha_b", 150), ("ocupacion_cancha_b", 150), ("fin_ocupacion_b", 150),
             ("tiempo_actual", 150), ("demora_limpieza", 150), ("fin_limpieza", 150),
             ("Estado Cancha", 100), ("ColaB", 60), ("ColaFyH", 60),("Tiempo_espera_f",150),
-            ("Tiempo_espera_h",150),("Tiempo_espera_b",150),("Tiempo_ocupacion_limpieza",150)
+            ("Tiempo_espera_h",150),("Tiempo_espera_b",150),("Tiempo_ocupacion_limpieza",180)
             ,("Objetos", 500)
         ]
 
