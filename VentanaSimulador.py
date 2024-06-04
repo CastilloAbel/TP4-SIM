@@ -4,11 +4,15 @@ from tkinter import Scrollbar
 import random
 import math
 
+
+
 class Temporal:
     def __init__(self, nombre, estado, hora_llegada):
         self.nombre = nombre
         self.estado = estado
         self.hora_llegada = hora_llegada
+
+    
 
     def set_estado(self, estado):
         self.estado = estado
@@ -31,6 +35,8 @@ class Fila:
         self.tiempo_espera_ocupacion_limpieza = tiempo_espera_ocupacion_limpieza
         self.objetos = []
     
+    
+
     def equipo_futbol(self, nombre, estado, hora_llegada):
         return Temporal(nombre, estado, hora_llegada)
     def equipo_basquet(self, nombre, estado, hora_llegada):
@@ -235,8 +241,10 @@ class VentanaSimulador:
         # Crear y colocar los widgets de entrada
         self.create_widgets()
 
-    def truncar(self, numero):
-        return int(numero * 100) / 100
+    def truncar(self, numero, decimales=3):
+        factor = 10 ** decimales
+        return int(numero * factor) / factor
+    
 
     def create_widgets(self):
         labels_text = [
@@ -263,6 +271,8 @@ class VentanaSimulador:
         # Configuración para que los widgets se ajusten al tamaño de la ventana
         for child in self.frame.winfo_children():
             child.grid_configure(padx=5, pady=5)
+
+
 
     def iniciar_simulacion(self):
         # Obtener los valores de los campos de entrada
@@ -306,7 +316,7 @@ class VentanaSimulador:
         # Crear una nueva ventana para mostrar los resultados
         root_resultados = tk.Tk()
         resultados_ventana = ResultadosVentana(root_resultados)
-        resultados_ventana.mostrar_resultados(tabla)
+        resultados_ventana.mostrar_resultados(tabla, hora_especifica)
 
 class ResultadosVentana:
     def __init__(self, root ):
@@ -355,21 +365,32 @@ class ResultadosVentana:
 
 
 
-    def mostrar_resultados(self, tabla_resultados):
+    def mostrar_resultados(self, tabla_resultados, hora_especifica):
+
+        def truncar(numero, decimales=3):
+            if numero is not None:
+                factor = 10 ** decimales
+                return int(numero * factor) / factor
+            else:
+                return ""
+                
+
         # Limpiar el Treeview antes de insertar nuevos datos
         for row in self.tree.get_children():
             self.tree.delete(row)
 
         # Insertar los datos en el Treeview
-        for fila in tabla_resultados:
-            self.tree.insert("", "end", values=(fila.id, fila.nombre_evento, fila.reloj,
-                                                fila.eventos[0][0], fila.eventos[0][1],fila.eventos[0][2], 
-                                                fila.eventos[1][0], fila.eventos[1][1],fila.eventos[1][2],
-                                                fila.eventos[2][0], fila.eventos[2][1],fila.eventos[2][2],
-                                                fila.eventos[3][0],fila.eventos[3][1], fila.eventos[3][2],
-                                                fila.eventos[4][0],fila.eventos[4][1], fila.eventos[4][2],
-                                                fila.eventos[5][0],fila.eventos[5][1], fila.eventos[5][2],
-                                                fila.eventos[6][0],fila.eventos[6][1], fila.eventos[6][2],
+
+        if hora_especifica == 0:
+            for fila in tabla_resultados:
+                self.tree.insert("", "end", values=(fila.id, fila.nombre_evento, truncar(fila.reloj),
+                                                truncar(fila.eventos[0][0]), truncar(fila.eventos[0][1]),truncar(fila.eventos[0][2]), 
+                                                truncar(fila.eventos[1][0]), truncar(fila.eventos[1][1]),truncar(fila.eventos[1][2]),
+                                                truncar(fila.eventos[2][0]), truncar(fila.eventos[2][1]),truncar(fila.eventos[2][2]),
+                                                truncar(fila.eventos[3][0]),truncar(fila.eventos[3][1]), truncar(fila.eventos[3][2]),
+                                                truncar(fila.eventos[4][0]),truncar(fila.eventos[4][1]), truncar(fila.eventos[4][2]),
+                                                truncar(fila.eventos[5][0]),truncar(fila.eventos[5][1]), truncar(fila.eventos[5][2]),
+                                                truncar(fila.eventos[6][0]),truncar(fila.eventos[6][1]), truncar(fila.eventos[6][2]),
                                                 fila.estado_cancha, len(fila.colaB), len(fila.colaFyH), 
                                                 str(fila.objetos[0]) if len(fila.objetos) > 0 else ""))
 
