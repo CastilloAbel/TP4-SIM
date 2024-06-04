@@ -203,7 +203,9 @@ class Fila:
 
             elif self.reloj == self.eventos[6][2]:
                 if len(self.colaFyH) > 0:
-                    equipo = self.colaFyH.pop(0)
+                    cola = self.colaFyH
+                    equipo = cola.pop(0)
+                    self.colaFyH = cola
                     self.estado_cancha = "Cancha Ocupada"
                     if equipo.nombre == "Futbol":
                         rnd_ocupacion_futbol = random.random()
@@ -230,7 +232,9 @@ class Fila:
                                 [rnd_ocupacion_handball, fin_ocupacion_handball, self.reloj + fin_ocupacion_handball], 
                                 [None, None, None]]
                 elif len(self.colaB) > 0:
-                    equipo = self.colaB.pop(0)
+                    cola = self.colaB
+                    equipo = cola.pop(0)
+                    self.colaB = cola
                     self.estado_cancha = "Cancha Ocupada"
                     rnd_ocupacion_basquet = random.random()
                     fin_ocupacion_basquet  = self.distribucion_uniforme(rnd_ocupacion_basquet, fin_ocupacion_basquet_inf,fin_ocupacion_basquet_sup)
@@ -337,10 +341,7 @@ class VentanaSimulador:
                 lista = fila.simular(datos)
                 tabla.append(fila)
         
-        print(lista[5])
-        print(lista[6])
-        print(lista[7])
-        print(lista[8])
+
 
         # Crear una nueva ventana para mostrar los resultados
         root_resultados = tk.Tk()
@@ -361,10 +362,10 @@ class ResultadosVentana:
 
         # Crear el Treeview para mostrar los resultados de la simulación
         self.tree = ttk.Treeview(self.frame, columns=("ID", "Evento", "Reloj","rnd_f", "llegada_f","proxima_f", 
-                                "rnd_h", "llegada_h","proxima_h", "rnd_b", "llegada_b","proxima_b",
+                                "rnd_b", "llegada_b","proxima_b", "rnd_h", "llegada_h","proxima_h",
                                 "rnd_cancha_f", "ocupacion_cancha_f","fin_ocupacion_f",
-                                "rnd_cancha_h", "ocupacion_cancha_h","fin_ocupacion_h",
                                 "rnd_cancha_b", "ocupacion_cancha_b","fin_ocupacion_b",
+                                "rnd_cancha_h", "ocupacion_cancha_h","fin_ocupacion_h",
                                 "tiempo_actual", "demora_limpieza", "fin_limpieza",
                                 "Estado Cancha", "ColaB", "ColaFyH","Tiempo_espera_f",
                                 "Tiempo_espera_h","Tiempo_espera_b","Tiempo_ocupacion_limpieza" ,"Objetos"), show="headings")
@@ -372,10 +373,10 @@ class ResultadosVentana:
         # Configurar encabezados y anchos de columna
         columns = [
             ("ID", 50), ("Evento", 200), ("Reloj", 150), ("rnd_f", 150), ("llegada_f", 150), ("proxima_f", 150),
-            ("rnd_h", 150), ("llegada_h", 150), ("proxima_h", 150), ("rnd_b", 150), ("llegada_b", 150), ("proxima_b", 150),
+            ("rnd_b", 150), ("llegada_b", 150), ("proxima_b", 150), ("rnd_h", 150), ("llegada_h", 150), ("proxima_h", 150),
             ("rnd_cancha_f", 150), ("ocupacion_cancha_f", 150), ("fin_ocupacion_f", 150),
-            ("rnd_cancha_h", 150), ("ocupacion_cancha_h", 150), ("fin_ocupacion_h", 150),
             ("rnd_cancha_b", 150), ("ocupacion_cancha_b", 150), ("fin_ocupacion_b", 150),
+            ("rnd_cancha_h", 150), ("ocupacion_cancha_h", 150), ("fin_ocupacion_h", 150),
             ("tiempo_actual", 150), ("demora_limpieza", 150), ("fin_limpieza", 150),
             ("Estado Cancha", 100), ("ColaB", 60), ("ColaFyH", 60),("Tiempo_espera_f",150),
             ("Tiempo_espera_h",150),("Tiempo_espera_b",150),("Tiempo_ocupacion_limpieza",180)
