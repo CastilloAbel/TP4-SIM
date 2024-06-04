@@ -342,6 +342,7 @@ class VentanaSimulador:
                 colas.append([len(fila.colaB), len(fila.colaFyH)])
             else:
                 if fila.reloj >= tiempo_total:
+                    tabla.pop()
                     break
                 else:
                     fila = Fila(i+1, lista[0], lista[1], lista[2], lista[3], lista[4], lista[5], lista[6], lista[7], lista[8])
