@@ -348,16 +348,7 @@ class VentanaSimulador:
                     lista = fila.simular(datos)
                     tabla.append(fila)
                     colas.append([len(fila.colaB), len(fila.colaFyH)])
-                    # print(len(colas[i][0]))
-                    # print(colas[i][1])
-                    # print(len(fila.colaB))
-                    # print(len(fila.colaFyH))
-        
-        # print(tabla[24].colaB)
-        # print(tabla[22].colaB)
 
-        # print(tabla[24].colaFyH)
-        # print(tabla[28].colaFyH)
 
 
         # Crear una nueva ventana para mostrar los resultados
@@ -435,12 +426,10 @@ class ResultadosVentana:
 
         # Insertar los datos en el Treeview
         #for line in lista(0:len(cantidad))
-        i = 0
+
         if hora_especifica == 0 and cantidad_filas != 0:
             for i, fila in enumerate(tabla_resultados[0:cantidad_filas]):
-                # print(len(fila.colaB))
-                # print(len(fila.colaFyH))
-                # print(colas[i])
+
                 self.tree.insert("", "end", values=(fila.id, fila.nombre_evento, truncar(fila.reloj),
                                                 truncar(fila.eventos[0][0]), truncar(fila.eventos[0][1]),truncar(fila.eventos[0][2]), 
                                                 truncar(fila.eventos[1][0]), truncar(fila.eventos[1][1]),truncar(fila.eventos[1][2]),
@@ -452,6 +441,17 @@ class ResultadosVentana:
                                                 fila.estado_cancha, colas[i][0], colas[i][1], truncar(fila.tiempo_espera_futbol),
                                                 truncar(fila.tiempo_espera_handball), truncar(fila.tiempo_espera_basquetball),
                                                 truncar(fila.tiempo_espera_ocupacion_limpieza),str(fila.objetos[0]) if len(fila.objetos) > 0 else ""))
+            self.tree.insert("", "end", values=(tabla_resultados[-1].id, tabla_resultados[-1].nombre_evento, truncar(tabla_resultados[-1].reloj),
+                                                truncar(tabla_resultados[-1].eventos[0][0]), truncar(tabla_resultados[-1].eventos[0][1]), truncar(tabla_resultados[-1].eventos[0][2]), 
+                                                truncar(tabla_resultados[-1].eventos[1][0]), truncar(tabla_resultados[-1].eventos[1][1]), truncar(tabla_resultados[-1].eventos[1][2]),
+                                                truncar(tabla_resultados[-1].eventos[2][0]), truncar(tabla_resultados[-1].eventos[2][1]), truncar(tabla_resultados[-1].eventos[2][2]),
+                                                truncar(tabla_resultados[-1].eventos[3][0]), truncar(tabla_resultados[-1].eventos[3][1]), truncar(tabla_resultados[-1].eventos[3][2]),
+                                                truncar(tabla_resultados[-1].eventos[4][0]), truncar(tabla_resultados[-1].eventos[4][1]), truncar(tabla_resultados[-1].eventos[4][2]),
+                                                truncar(tabla_resultados[-1].eventos[5][0]), truncar(tabla_resultados[-1].eventos[5][1]), truncar(tabla_resultados[-1].eventos[5][2]),
+                                                truncar(tabla_resultados[-1].eventos[6][0]), truncar(tabla_resultados[-1].eventos[6][1]), truncar(tabla_resultados[-1].eventos[6][2]),
+                                                tabla_resultados[-1].estado_cancha, colas[-1][0], colas[-1][1], truncar(tabla_resultados[-1].tiempo_espera_futbol),
+                                                truncar(tabla_resultados[-1].tiempo_espera_handball), truncar(tabla_resultados[-1].tiempo_espera_basquetball),
+                                                truncar(tabla_resultados[-1].tiempo_espera_ocupacion_limpieza),str(tabla_resultados[-1].objetos[0]) if len(tabla_resultados[-1].objetos) > 0 else ""))
 
                                                 
         elif hora_especifica != 0 and cantidad_filas != 0:
@@ -467,7 +467,18 @@ class ResultadosVentana:
                                                 truncar(fila.eventos[6][0]), truncar(fila.eventos[6][1]), truncar(fila.eventos[6][2]),
                                                 fila.estado_cancha, colas[i][0], colas[i][1], truncar(fila.tiempo_espera_futbol),
                                                 truncar(fila.tiempo_espera_handball), truncar(fila.tiempo_espera_basquetball),
-                                                truncar(fila.tiempo_espera_ocupacion_limpieza),str(fila.objetos[0]) if len(fila.objetos) > 0 else ""))
+                                                truncar(fila.tiempo_espera_ocupacion_limpieza),str(fila.objetos[0]) if len(tabla_resultados[-1].objetos) > 0 else ""))
+            self.tree.insert("", "end", values=(tabla_resultados[-1].id, tabla_resultados[-1].nombre_evento, truncar(fila.reloj),
+                                                truncar(tabla_resultados[-1].eventos[0][0]), truncar(tabla_resultados[-1].eventos[0][1]), truncar(tabla_resultados[-1].eventos[0][2]), 
+                                                truncar(tabla_resultados[-1].eventos[1][0]), truncar(tabla_resultados[-1].eventos[1][1]), truncar(tabla_resultados[-1].eventos[1][2]),
+                                                truncar(tabla_resultados[-1].eventos[2][0]), truncar(tabla_resultados[-1].eventos[2][1]), truncar(tabla_resultados[-1].eventos[2][2]),
+                                                truncar(tabla_resultados[-1].eventos[3][0]), truncar(tabla_resultados[-1].eventos[3][1]), truncar(tabla_resultados[-1].eventos[3][2]),
+                                                truncar(tabla_resultados[-1].eventos[4][0]), truncar(tabla_resultados[-1].eventos[4][1]), truncar(tabla_resultados[-1].eventos[4][2]),
+                                                truncar(tabla_resultados[-1].eventos[5][0]), truncar(tabla_resultados[-1].eventos[5][1]), truncar(tabla_resultados[-1].eventos[5][2]),
+                                                truncar(tabla_resultados[-1].eventos[6][0]), truncar(tabla_resultados[-1].eventos[6][1]), truncar(tabla_resultados[-1].eventos[6][2]),
+                                                tabla_resultados[-1].estado_cancha, colas[-1][0], colas[-1][1], truncar(tabla_resultados[-1].tiempo_espera_futbol),
+                                                truncar(tabla_resultados[-1].tiempo_espera_handball), truncar(tabla_resultados[-1].tiempo_espera_basquetball),
+                                                truncar(tabla_resultados[-1].tiempo_espera_ocupacion_limpieza),str(tabla_resultados[-1].objetos[0]) if len(tabla_resultados[-1].objetos) > 0 else ""))
         else:
             self.tree.insert("","end",values="")            
 
