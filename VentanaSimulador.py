@@ -78,72 +78,95 @@ class Fila:
                 rnd_llegada_futbol = random.random()
                 llegada_futbol = self.distribucion_exponencial(rnd_llegada_futbol, media_llegada_futbol)
                 self.nombre_evento = "Llegada Equipo de Futbol"
-                if self.estado_cancha == "Cancha Libre":
-                    self.estado_cancha = "Cancha ocupada"
-                    self.objetos.append(self.equipo_futbol("Futbol","Jugando", self.reloj))
-                    rnd_ocupacion_futbol = random.random()
-                    fin_ocupacion_futbol = self.distribucion_uniforme(rnd_ocupacion_futbol, fin_ocupacion_futbol_inf,fin_ocupacion_futbol_sup)
-                    self.eventos = [[rnd_llegada_futbol, llegada_futbol, self.reloj + llegada_futbol], 
-                            self.eventos[1], 
-                            self.eventos[2],
-                            [rnd_ocupacion_futbol, fin_ocupacion_futbol, self.reloj + fin_ocupacion_futbol], 
-                            self.eventos[4], self.eventos[5], self.eventos[6]]
+                if (len(self.colaFyH) + len(self.colaB) >= cantidad_equipos_max):
+                    if self.estado_cancha == "Cancha Libre":
+                        self.estado_cancha = "Cancha ocupada"
+                        self.objetos.append(self.equipo_futbol("Futbol","Jugando", self.reloj))
+                        rnd_ocupacion_futbol = random.random()
+                        fin_ocupacion_futbol = self.distribucion_uniforme(rnd_ocupacion_futbol, fin_ocupacion_futbol_inf,fin_ocupacion_futbol_sup)
+                        self.eventos = [[rnd_llegada_futbol, llegada_futbol, self.reloj + llegada_futbol], 
+                                self.eventos[1], 
+                                self.eventos[2],
+                                [rnd_ocupacion_futbol, fin_ocupacion_futbol, self.reloj + fin_ocupacion_futbol], 
+                                self.eventos[4], self.eventos[5], self.eventos[6]]
+                    else:
+                        self.colaFyH.append(self.equipo_futbol("Futbol", "Esperando Jugar", self.reloj))
+                        self.eventos = [[rnd_llegada_futbol, llegada_futbol, self.reloj + llegada_futbol], 
+                                self.eventos[1], 
+                                self.eventos[2],
+                                self.eventos[3], 
+                                self.eventos[4], self.eventos[5], self.eventos[6]]
                 else:
-                    self.colaFyH.append(self.equipo_futbol("Futbol", "Esperando Jugar", self.reloj))
                     self.eventos = [[rnd_llegada_futbol, llegada_futbol, self.reloj + llegada_futbol], 
-                            self.eventos[1], 
-                            self.eventos[2],
-                            self.eventos[3], 
-                            self.eventos[4], self.eventos[5], self.eventos[6]]
+                                self.eventos[1], 
+                                self.eventos[2],
+                                self.eventos[3], 
+                                self.eventos[4], self.eventos[5], self.eventos[6]]
             elif self.reloj == self.eventos[1][2]:
                 rnd_llegada_basquet = random.random()
                 llegada_basquet = self.distribucion_uniforme(rnd_llegada_basquet, intervalo_llegada_basquet_inf, intervalo_llegada_basquet_sup)
-                if self.estado_cancha == "Cancha Libre":
-                    self.estado_cancha = "Cancha ocupada"
-                    self.objetos.append(self.equipo_basquet("Basquet", "Jugando", self.reloj))
-                    rnd_ocupacion_basquet = random.random()
-                    fin_ocupacion_basquet  = self.distribucion_uniforme(rnd_ocupacion_basquet, fin_ocupacion_basquet_inf,fin_ocupacion_basquet_sup)
-                    self.eventos = [self.eventos[0], 
-                            [rnd_llegada_basquet, llegada_basquet, self.reloj + llegada_basquet], 
-                            self.eventos[2],
-                            self.eventos[3], 
-                            [rnd_ocupacion_basquet, fin_ocupacion_basquet, self.reloj + fin_ocupacion_basquet], 
-                            self.eventos[5], self.eventos[6]]
-                else:
-                    self.colaB.append(self.equipo_basquet("Basquet", "Esperando Jugar", self.reloj))
-                    self.eventos = [self.eventos[0], 
-                            [rnd_llegada_basquet, llegada_basquet, self.reloj + llegada_basquet], 
-                            self.eventos[2],
-                            self.eventos[3], 
-                            self.eventos[4], 
-                            self.eventos[5], self.eventos[6]]
                 self.nombre_evento = "Llegada Equipo de BasquetBall"
+                if (len(self.colaFyH) + len(self.colaB) >= cantidad_equipos_max):
+                    if self.estado_cancha == "Cancha Libre":
+                        self.estado_cancha = "Cancha ocupada"
+                        self.objetos.append(self.equipo_basquet("Basquet", "Jugando", self.reloj))
+                        rnd_ocupacion_basquet = random.random()
+                        fin_ocupacion_basquet  = self.distribucion_uniforme(rnd_ocupacion_basquet, fin_ocupacion_basquet_inf,fin_ocupacion_basquet_sup)
+                        self.eventos = [self.eventos[0], 
+                                [rnd_llegada_basquet, llegada_basquet, self.reloj + llegada_basquet], 
+                                self.eventos[2],
+                                self.eventos[3], 
+                                [rnd_ocupacion_basquet, fin_ocupacion_basquet, self.reloj + fin_ocupacion_basquet], 
+                                self.eventos[5], self.eventos[6]]
+                    else:
+                        self.colaB.append(self.equipo_basquet("Basquet", "Esperando Jugar", self.reloj))
+                        self.eventos = [self.eventos[0], 
+                                [rnd_llegada_basquet, llegada_basquet, self.reloj + llegada_basquet], 
+                                self.eventos[2],
+                                self.eventos[3], 
+                                self.eventos[4], 
+                                self.eventos[5], self.eventos[6]]
+                else:
+                    self.eventos = [self.eventos[0], 
+                                [rnd_llegada_basquet, llegada_basquet, self.reloj + llegada_basquet], 
+                                self.eventos[2],
+                                self.eventos[3], 
+                                self.eventos[4], 
+                                self.eventos[5], self.eventos[6]]
             elif self.reloj == self.eventos[2][2]:
                 rnd_llegada_handball = random.random()
                 llegada_handball = self.distribucion_uniforme(rnd_llegada_handball, intervalo_llegada_handball_inf, intervalo_llegada_handball_sup)
-                if self.estado_cancha == "Cancha Libre":
-                    self.estado_cancha = "Cancha ocupada"
-                    self.objetos.append(self.equipo_handball("Handball", "Jugando", self.reloj))
-                    rnd_ocupacion_handball = random.random()
-                    fin_ocupacion_handball  = self.distribucion_uniforme(rnd_ocupacion_handball, fin_ocupacion_handball_inf,fin_ocupacion_handball_sup)
-                    self.eventos = [self.eventos[0],
-                            self.eventos[1],
-                            [rnd_llegada_handball, llegada_handball, self.reloj + llegada_handball],
-                            self.eventos[3],
-                            self.eventos[4],
-                            [rnd_ocupacion_handball, fin_ocupacion_handball, self.reloj + fin_ocupacion_handball], 
-                            self.eventos[6]]
-                else:
-                    self.colaFyH.append(self.equipo_handball("Handball", "Esperando Jugar", self.reloj))
-                    self.eventos = [self.eventos[0],
-                            self.eventos[1],
-                            [rnd_llegada_handball, llegada_handball, self.reloj + llegada_handball],
-                            self.eventos[3],
-                            self.eventos[4],
-                            self.eventos[5], 
-                            self.eventos[6]]
                 self.nombre_evento = "Llegada Equipo de Handball"
-                ################
+                if (len(self.colaFyH) + len(self.colaB) >= cantidad_equipos_max):
+                    if self.estado_cancha == "Cancha Libre":
+                        self.estado_cancha = "Cancha ocupada"
+                        self.objetos.append(self.equipo_handball("Handball", "Jugando", self.reloj))
+                        rnd_ocupacion_handball = random.random()
+                        fin_ocupacion_handball  = self.distribucion_uniforme(rnd_ocupacion_handball, fin_ocupacion_handball_inf,fin_ocupacion_handball_sup)
+                        self.eventos = [self.eventos[0],
+                                self.eventos[1],
+                                [rnd_llegada_handball, llegada_handball, self.reloj + llegada_handball],
+                                self.eventos[3],
+                                self.eventos[4],
+                                [rnd_ocupacion_handball, fin_ocupacion_handball, self.reloj + fin_ocupacion_handball], 
+                                self.eventos[6]]
+                    else:
+                        self.colaFyH.append(self.equipo_handball("Handball", "Esperando Jugar", self.reloj))
+                        self.eventos = [self.eventos[0],
+                                self.eventos[1],
+                                [rnd_llegada_handball, llegada_handball, self.reloj + llegada_handball],
+                                self.eventos[3],
+                                self.eventos[4],
+                                self.eventos[5], 
+                                self.eventos[6]]
+                else:
+                    self.eventos = [self.eventos[0],
+                                self.eventos[1],
+                                [rnd_llegada_handball, llegada_handball, self.reloj + llegada_handball],
+                                self.eventos[3],
+                                self.eventos[4],
+                                self.eventos[5], 
+                                self.eventos[6]]
             elif self.reloj == self.eventos[3][2]:
                 hora_comienzo_limpieza = self.reloj
                 self.nombre_evento = "Fin de ocupacion cancha de futbol"
