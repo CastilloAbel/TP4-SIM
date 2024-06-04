@@ -393,6 +393,19 @@ class ResultadosVentana:
                                                 truncar(fila.eventos[6][0]),truncar(fila.eventos[6][1]), truncar(fila.eventos[6][2]),
                                                 fila.estado_cancha, len(fila.colaB), len(fila.colaFyH), 
                                                 str(fila.objetos[0]) if len(fila.objetos) > 0 else ""))
+        else:
+            for fila in tabla_resultados:
+                if fila.reloj >= hora_especifica:
+                    self.tree.insert("", "end", values=(fila.id, fila.nombre_evento, truncar(fila.reloj),
+                                                truncar(fila.eventos[0][0]), truncar(fila.eventos[0][1]), truncar(fila.eventos[0][2]), 
+                                                truncar(fila.eventos[1][0]), truncar(fila.eventos[1][1]), truncar(fila.eventos[1][2]),
+                                                truncar(fila.eventos[2][0]), truncar(fila.eventos[2][1]), truncar(fila.eventos[2][2]),
+                                                truncar(fila.eventos[3][0]), truncar(fila.eventos[3][1]), truncar(fila.eventos[3][2]),
+                                                truncar(fila.eventos[4][0]), truncar(fila.eventos[4][1]), truncar(fila.eventos[4][2]),
+                                                truncar(fila.eventos[5][0]), truncar(fila.eventos[5][1]), truncar(fila.eventos[5][2]),
+                                                truncar(fila.eventos[6][0]), truncar(fila.eventos[6][1]), truncar(fila.eventos[6][2]),
+                                                fila.estado_cancha, len(fila.colaB), len(fila.colaFyH), 
+                                                str(fila.objetos[0]) if len(fila.objetos) > 0 else ""))
 
 if __name__ == "__main__":
     root = tk.Tk()
