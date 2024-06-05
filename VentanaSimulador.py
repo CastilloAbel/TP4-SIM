@@ -24,7 +24,6 @@ class Temporal:
     
     def __str__(self):
         return f"Nombre: {self.nombre}, Estado: {self.estado}, Hora de llegada: {self.truncar(self.hora_llegada)}\n"
-
 class Fila:
     def __init__(self, id, reloj=0.0, eventos=[], estado_cancha="Cancha Libre", colaB=[], colaFyH=[],tiempo_espera_futbol=0, tiempo_espera_basquetball=0, tiempo_espera_handball=0, tiempo_espera_ocupacion_limpieza=0) -> None:
         self.id = id
@@ -38,8 +37,8 @@ class Fila:
         self.tiempo_espera_basquetball = tiempo_espera_basquetball
         self.tiempo_espera_handball = tiempo_espera_handball
         self.tiempo_espera_ocupacion_limpieza = tiempo_espera_ocupacion_limpieza
-        self.objetos = []
-    
+        self.objetos = self.colaB + self.colaFyH
+ 
     
 
     def equipo_futbol(self, nombre, estado, hora_llegada):
@@ -78,7 +77,6 @@ class Fila:
             return [reloj, self.eventos, self.estado_cancha, [], [], self.tiempo_espera_futbol, self.tiempo_espera_basquetball, self.tiempo_espera_handball, self.tiempo_espera_ocupacion_limpieza]
         else:
             self.reloj = min((evento[2] for evento in self.eventos if evento[2] is not None), default=None)
-
             #self.reloj = min(self.eventos[0][2], self.eventos[1][2], self.eventos[2][2], self.eventos[3][2], self.eventos[4][2], self.eventos[5][2], self.eventos[6][2])
 
             if self.reloj == self.eventos[0][2]:
@@ -98,6 +96,7 @@ class Fila:
                                         self.eventos[4], self.eventos[5], self.eventos[6]]
                     else:
                         self.colaFyH.append(self.equipo_futbol("Futbol", "Esperando Jugar", self.reloj))
+                        self.objetos.append(self.equipo_futbol("Futbol", "Esperando Jugar", self.reloj))
                         self.eventos = [[rnd_llegada_futbol, llegada_futbol, self.reloj + llegada_futbol], 
                                         self.eventos[1], 
                                         self.eventos[2],
@@ -127,6 +126,7 @@ class Fila:
                                         self.eventos[5], self.eventos[6]]
                     else:
                         self.colaB.append(self.equipo_basquet("Basquet", "Esperando Jugar", self.reloj))
+                        self.objetos.append(self.equipo_basquet("Basquet", "Esperando Jugar", self.reloj))
                         self.eventos = [self.eventos[0], 
                                         [rnd_llegada_basquet, llegada_basquet, self.reloj + llegada_basquet], 
                                         self.eventos[2],
@@ -159,6 +159,7 @@ class Fila:
                                         self.eventos[6]]
                     else:
                         self.colaFyH.append(self.equipo_handball("Handball", "Esperando Jugar", self.reloj))
+                        self.objetos.append(self.equipo_handball("Handball", "Esperando Jugar", self.reloj))
                         self.eventos = [self.eventos[0],
                                         self.eventos[1],
                                         [rnd_llegada_handball, llegada_handball, self.reloj + llegada_handball],
@@ -384,7 +385,7 @@ class ResultadosVentana:
                                 "rnd_cancha_h", "ocupacion_cancha_h","fin_ocupacion_h",
                                 "tiempo_actual", "demora_limpieza", "fin_limpieza",
                                 "Estado Cancha", "ColaB", "ColaFyH","Tiempo_espera_f",
-                                "Tiempo_espera_h","Tiempo_espera_b","Tiempo_ocupacion_limpieza" ,"Objetos"), show="headings")
+                                "Tiempo_espera_h","Tiempo_espera_b","Tiempo_ocupacion_limpieza" ,"Objeto1", "Objeto2", "Objeto3", "Objeto4"), show="headings")
         
         # Configurar encabezados y anchos de columna
         columns = [
@@ -395,8 +396,8 @@ class ResultadosVentana:
             ("rnd_cancha_h", 150), ("ocupacion_cancha_h", 150), ("fin_ocupacion_h", 150),
             ("tiempo_actual", 150), ("demora_limpieza", 150), ("fin_limpieza", 150),
             ("Estado Cancha", 100), ("ColaB", 60), ("ColaFyH", 60),("Tiempo_espera_f",150),
-            ("Tiempo_espera_h",150),("Tiempo_espera_b",150),("Tiempo_ocupacion_limpieza",180)
-            ,("Objetos", 500)
+            ("Tiempo_espera_h",150),("Tiempo_espera_b",150),("Tiempo_ocupacion_limpieza",180),
+            ("Objeto1", 500),("Objeto2", 500),("Objeto3", 500),("Objeto4", 500)
         ]
 
         for col, width in columns:
@@ -404,7 +405,10 @@ class ResultadosVentana:
             self.tree.column(col, width=width, anchor='center')
     
         self.tree.column("Evento", width=260, anchor='w')
-        self.tree.column("Objetos", width=480, anchor='w')
+        self.tree.column("Objeto1", width=480, anchor='w')
+        self.tree.column("Objeto2", width=480, anchor='w')
+        self.tree.column("Objeto3", width=480, anchor='w')
+        self.tree.column("Objeto4", width=480, anchor='w')
 
         # Crear los scrollbars y asociarlos con el Treeview
         self.vsb = ttk.Scrollbar(self.frame, orient="vertical", command=self.tree.yview)
@@ -434,12 +438,22 @@ class ResultadosVentana:
 
         if hora_especifica == 0 and cantidad_filas != 0:
             for i, fila in enumerate(tabla_resultados[0:cantidad_filas]):
-                if len(fila.objetos) == 2:
-                    objetos = fila.objetos[0] + fila.objetos[1]
-                elif len(fila.objetos) == 1:
-                    objetos = fila.objetos[0]
-                else:
-                    objetos = "Empty"
+                objeto1, objeto2, objeto3, objeto4 = "", "", "", ""
+                if len(fila.objetos) > 0:
+                    if len(fila.objetos) == 1:
+                        objeto1 = str(fila.objetos[0])
+                    elif len(fila.objetos) == 2:
+                        objeto1 = str(fila.objetos[0])
+                        objeto2 = str(fila.objetos[1])
+                    elif len(fila.objetos) == 3:
+                        objeto1 = str(fila.objetos[0])
+                        objeto2 = str(fila.objetos[1])
+                        objeto3 = str(fila.objetos[2])
+                    else:
+                        objeto1 = str(fila.objetos[0])
+                        objeto2 = str(fila.objetos[1])
+                        objeto3 = str(fila.objetos[2])
+                        objeto4 = str(fila.objetos[3])
                 self.tree.insert("", "end", values=(fila.id, fila.nombre_evento, truncar(fila.reloj),
                                 truncar(fila.eventos[0][0]), truncar(fila.eventos[0][1]),truncar(fila.eventos[0][2]), 
                                 truncar(fila.eventos[1][0]), truncar(fila.eventos[1][1]),truncar(fila.eventos[1][2]),
@@ -450,7 +464,7 @@ class ResultadosVentana:
                                 truncar(fila.eventos[6][0]),truncar(fila.eventos[6][1]), truncar(fila.eventos[6][2]),
                                 fila.estado_cancha, colas[i][0], colas[i][1], truncar(fila.tiempo_espera_futbol),
                                 truncar(fila.tiempo_espera_handball), truncar(fila.tiempo_espera_basquetball),
-                                truncar(fila.tiempo_espera_ocupacion_limpieza),objetos if len(fila.objetos) > 0 else ""))
+                                truncar(fila.tiempo_espera_ocupacion_limpieza),objeto1, objeto2, objeto3, objeto4))
             self.tree.insert("", "end", values=(tabla_resultados[-1].id, tabla_resultados[-1].nombre_evento, truncar(tabla_resultados[-1].reloj),
                             truncar(tabla_resultados[-1].eventos[0][0]), truncar(tabla_resultados[-1].eventos[0][1]), truncar(tabla_resultados[-1].eventos[0][2]), 
                             truncar(tabla_resultados[-1].eventos[1][0]), truncar(tabla_resultados[-1].eventos[1][1]), truncar(tabla_resultados[-1].eventos[1][2]),
@@ -461,18 +475,28 @@ class ResultadosVentana:
                             truncar(tabla_resultados[-1].eventos[6][0]), truncar(tabla_resultados[-1].eventos[6][1]), truncar(tabla_resultados[-1].eventos[6][2]),
                             tabla_resultados[-1].estado_cancha, colas[-1][0], colas[-1][1], truncar(tabla_resultados[-1].tiempo_espera_futbol),
                             truncar(tabla_resultados[-1].tiempo_espera_handball), truncar(tabla_resultados[-1].tiempo_espera_basquetball),
-                            truncar(tabla_resultados[-1].tiempo_espera_ocupacion_limpieza),str(tabla_resultados[-1].objetos[0]) if len(tabla_resultados[-1].objetos) > 0 else ""))
+                            truncar(tabla_resultados[-1].tiempo_espera_ocupacion_limpieza)))
 
                                                 
         elif hora_especifica != 0 and cantidad_filas != 0:
             for i, fila in enumerate(tabla_resultados[0:cantidad_filas]):
-                if len(fila.objetos) == 2:
-                    objetos = fila.objetos[0] + fila.objetos[1]
-                elif len(fila.objetos) == 1:
-                    objetos = fila.objetos[0]
-                else:
-                    objetos = "Empty"
                 if fila.reloj >= hora_especifica:
+                    objeto1, objeto2, objeto3, objeto4 = "", "", "", ""
+                    if len(fila.objetos) > 0:
+                        if len(fila.objetos) == 1:
+                            objeto1 = str(fila.objetos[0])
+                        elif len(fila.objetos) == 2:
+                            objeto1 = str(fila.objetos[0])
+                            objeto2 = str(fila.objetos[1])
+                        elif len(fila.objetos) == 3:
+                            objeto1 = str(fila.objetos[0])
+                            objeto2 = str(fila.objetos[1])
+                            objeto3 = str(fila.objetos[2])
+                        else:
+                            objeto1 = str(fila.objetos[0])
+                            objeto2 = str(fila.objetos[1])
+                            objeto3 = str(fila.objetos[2])
+                            objeto4 = str(fila.objetos[3])
                     self.tree.insert("", "end", values=(fila.id, fila.nombre_evento, truncar(fila.reloj),
                                     truncar(fila.eventos[0][0]), truncar(fila.eventos[0][1]), truncar(fila.eventos[0][2]), 
                                     truncar(fila.eventos[1][0]), truncar(fila.eventos[1][1]), truncar(fila.eventos[1][2]),
@@ -483,7 +507,7 @@ class ResultadosVentana:
                                     truncar(fila.eventos[6][0]), truncar(fila.eventos[6][1]), truncar(fila.eventos[6][2]),
                                     fila.estado_cancha, colas[i][0], colas[i][1], truncar(fila.tiempo_espera_futbol),
                                     truncar(fila.tiempo_espera_handball), truncar(fila.tiempo_espera_basquetball),
-                                    truncar(fila.tiempo_espera_ocupacion_limpieza), objetos if len(tabla_resultados[-1].objetos) > 0 else ""))
+                                    truncar(fila.tiempo_espera_ocupacion_limpieza), objeto1, objeto2, objeto3, objeto4))
             self.tree.insert("", "end", values=(tabla_resultados[-1].id, tabla_resultados[-1].nombre_evento, truncar(fila.reloj),
                             truncar(tabla_resultados[-1].eventos[0][0]), truncar(tabla_resultados[-1].eventos[0][1]), truncar(tabla_resultados[-1].eventos[0][2]), 
                             truncar(tabla_resultados[-1].eventos[1][0]), truncar(tabla_resultados[-1].eventos[1][1]), truncar(tabla_resultados[-1].eventos[1][2]),
@@ -494,7 +518,7 @@ class ResultadosVentana:
                             truncar(tabla_resultados[-1].eventos[6][0]), truncar(tabla_resultados[-1].eventos[6][1]), truncar(tabla_resultados[-1].eventos[6][2]),
                             tabla_resultados[-1].estado_cancha, colas[-1][0], colas[-1][1], truncar(tabla_resultados[-1].tiempo_espera_futbol),
                             truncar(tabla_resultados[-1].tiempo_espera_handball), truncar(tabla_resultados[-1].tiempo_espera_basquetball),
-                            truncar(tabla_resultados[-1].tiempo_espera_ocupacion_limpieza),str(tabla_resultados[-1].objetos[0]) if len(tabla_resultados[-1].objetos) > 0 else ""))
+                            truncar(tabla_resultados[-1].tiempo_espera_ocupacion_limpieza)))
         else:
             self.tree.insert("","end",values="")            
 
