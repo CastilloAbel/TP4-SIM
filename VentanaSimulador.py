@@ -23,7 +23,14 @@ class Temporal:
             return ""
     
     def __str__(self):
-        return f"Nombre: {self.nombre}, Estado: {self.estado}, Hora de llegada: {self.truncar(self.hora_llegada)}\n"
+        nombre = ""
+        if self.estado is True and self.nombre in ("Futbol", "Basquet", "Handball"):
+            nombre = "Jugando"
+        elif self.estado is True and self.nombre == "Personal Limpieza":
+            nombre = "Limpiando"
+        elif self.estado is False:
+            nombre = "Esperando"
+        return f"Nombre: {self.nombre}, Estado: {nombre}, Hora de llegada: {self.truncar(self.hora_llegada)}\n"
 class Fila:
     def __init__(self, id, reloj=0.0, eventos=[], estado_cancha="Cancha Libre", colaB=[], colaFyH=[],tiempo_espera_futbol=0, tiempo_espera_basquetball=0, tiempo_espera_handball=0, tiempo_espera_ocupacion_limpieza=0, objetos=[]) -> None:
         self.id = id
@@ -86,7 +93,7 @@ class Fila:
                 if (len(self.colaFyH) + len(self.colaB) <= cantidad_equipos_max):
                     if self.estado_cancha == "Cancha Libre":
                         self.estado_cancha = "Cancha ocupada"
-                        self.objetos.append(self.equipo_futbol("Futbol","Jugando", self.reloj))
+                        self.objetos.append(self.equipo_futbol("Futbol",True, self.reloj))
                         rnd_ocupacion_futbol = random.random()
                         fin_ocupacion_futbol = self.distribucion_uniforme(rnd_ocupacion_futbol, fin_ocupacion_futbol_inf,fin_ocupacion_futbol_sup)
                         self.eventos = [[rnd_llegada_futbol, llegada_futbol, self.reloj + llegada_futbol], 
@@ -95,8 +102,7 @@ class Fila:
                                         [rnd_ocupacion_futbol, fin_ocupacion_futbol, self.reloj + fin_ocupacion_futbol], 
                                         self.eventos[4], self.eventos[5], self.eventos[6]]
                     else:
-                        equipo = self.equipo_futbol("Futbol", "Esperando Jugar", self.reloj)
-                        equipo.set_estado("Esperando Jugar")
+                        equipo = self.equipo_futbol("Futbol", False, self.reloj)
                         self.colaFyH.append(equipo)
                         self.objetos.append(equipo)
                         self.eventos = [[rnd_llegada_futbol, llegada_futbol, self.reloj + llegada_futbol], 
@@ -117,7 +123,7 @@ class Fila:
                 if (len(self.colaFyH) + len(self.colaB) <= cantidad_equipos_max):
                     if self.estado_cancha == "Cancha Libre":
                         self.estado_cancha = "Cancha ocupada"
-                        self.objetos.append(self.equipo_basquet("Basquet", "Jugando", self.reloj))
+                        self.objetos.append(self.equipo_basquet("Basquet", True, self.reloj))
                         rnd_ocupacion_basquet = random.random()
                         fin_ocupacion_basquet  = self.distribucion_uniforme(rnd_ocupacion_basquet, fin_ocupacion_basquet_inf,fin_ocupacion_basquet_sup)
                         self.eventos = [self.eventos[0], 
@@ -127,8 +133,7 @@ class Fila:
                                         [rnd_ocupacion_basquet, fin_ocupacion_basquet, self.reloj + fin_ocupacion_basquet], 
                                         self.eventos[5], self.eventos[6]]
                     else:
-                        equipo = self.equipo_basquet("Basquet", "Esperando Jugar", self.reloj)
-                        equipo.set_estado("Esperando Jugar")
+                        equipo = self.equipo_basquet("Basquet", False, self.reloj)
                         self.colaB.append(equipo)
                         self.objetos.append(equipo)
                         self.eventos = [self.eventos[0], 
@@ -151,7 +156,7 @@ class Fila:
                 if (len(self.colaFyH) + len(self.colaB) <= cantidad_equipos_max):
                     if self.estado_cancha == "Cancha Libre":
                         self.estado_cancha = "Cancha ocupada"
-                        self.objetos.append(self.equipo_handball("Handball", "Jugando", self.reloj))
+                        self.objetos.append(self.equipo_handball("Handball", True, self.reloj))
                         rnd_ocupacion_handball = random.random()
                         fin_ocupacion_handball  = self.distribucion_uniforme(rnd_ocupacion_handball, fin_ocupacion_handball_inf,fin_ocupacion_handball_sup)
                         self.eventos = [self.eventos[0],
@@ -162,8 +167,7 @@ class Fila:
                                         [rnd_ocupacion_handball, fin_ocupacion_handball, self.reloj + fin_ocupacion_handball], 
                                         self.eventos[6]]
                     else:
-                        equipo = self.equipo_handball("Handball", "Esperando Jugar", self.reloj)
-                        equipo.set_estado("Esperando Jugar")
+                        equipo = self.equipo_handball("Handball", False, self.reloj)
                         self.colaFyH.append(equipo)
                         objetos = self.objetos
                         objetos.append(equipo)
@@ -188,10 +192,10 @@ class Fila:
                 self.nombre_evento = "Fin de ocupacion cancha de futbol"
                 objetos = self.objetos
                 for i, obj in enumerate(objetos):
-                    if obj.estado == "Jugando":
+                    if obj.estado is True and obj.nombre == "Futbol":
                         objetos.pop(i)
                 self.objetos = objetos
-                self.objetos.append(self.personal_limpieza("Personal Limpieza", "Limpiando", self.reloj))
+                self.objetos.append(self.personal_limpieza("Personal Limpieza", True, self.reloj))
                 self.eventos = [self.eventos[0], 
                                 self.eventos[1], 
                                 self.eventos[2],
@@ -204,10 +208,10 @@ class Fila:
                 self.nombre_evento = "Fin de ocupacion cancha de basquetball"
                 objetos = self.objetos
                 for i, obj in enumerate(objetos):
-                    if obj.estado == "Jugando":
+                    if obj.estado is True and obj.nombre == "Basquet":
                         objetos.pop(i)
                 self.objetos = objetos
-                self.objetos.append(self.personal_limpieza("Personal Limpieza", "Limpiando", self.reloj))
+                self.objetos.append(self.personal_limpieza("Personal Limpieza", True, self.reloj))
                 self.eventos = [self.eventos[0], 
                                 self.eventos[1], 
                                 self.eventos[2],
@@ -220,10 +224,10 @@ class Fila:
                 self.nombre_evento = "Fin de ocupacion cancha de handball"
                 objetos = self.objetos
                 for i, obj in enumerate(objetos):
-                    if obj.estado == "Jugando":
+                    if obj.estado is True and obj.nombre == "Handball":
                         objetos.pop(i)
                 self.objetos = objetos
-                self.objetos.append(self.personal_limpieza("Personal Limpieza", "Limpiando", self.reloj))
+                self.objetos.append(self.personal_limpieza("Personal Limpieza", True, self.reloj))
                 self.eventos = [self.eventos[0], 
                                 self.eventos[1], 
                                 self.eventos[2],
@@ -244,8 +248,8 @@ class Fila:
                         self.tiempo_espera_futbol += (self.reloj - equipo.hora_llegada)
                         objetos = self.objetos
                         for i, obj in enumerate(objetos):
-                            if obj.estado == "Esperando Jugar" and obj.nombre == "Futbol":
-                                obj.set_estado("Jugando")
+                            if obj.estado is False and obj.nombre == "Futbol":
+                                obj.set_estado(True)
                                 break
                         self.objetos = objetos
                         self.eventos = [self.eventos[0], 
@@ -261,8 +265,8 @@ class Fila:
                         self.tiempo_espera_handball += (self.reloj - equipo.hora_llegada)
                         objetos = self.objetos
                         for i, obj in enumerate(objetos):
-                            if obj.estado == "Esperando Jugar" and obj.nombre == "Handball":
-                                obj.set_estado("Jugando")
+                            if obj.estado is False and obj.nombre == "Handball":
+                                obj.set_estado(True)
                                 break
                         self.objetos = objetos
                         self.eventos = [self.eventos[0],
@@ -281,8 +285,8 @@ class Fila:
                     fin_ocupacion_basquet  = self.distribucion_uniforme(rnd_ocupacion_basquet, fin_ocupacion_basquet_inf,fin_ocupacion_basquet_sup)
                     objetos = self.objetos
                     for i, obj in enumerate(objetos):
-                        if obj.estado == "Esperando Jugar" and obj.nombre == "Basquet":
-                            obj.set_estado("Jugando")
+                        if obj.estado is False and obj.nombre == "Basquet":
+                            obj.set_estado(True)
                             break
                     self.objetos = objetos
                     self.tiempo_espera_basquetball += (self.reloj - equipo.hora_llegada)
@@ -303,7 +307,7 @@ class Fila:
                                     [None, None, None]]
                 objetos = self.objetos
                 for i, obj in enumerate(objetos):
-                    if obj.estado == "Limpiando":
+                    if obj.estado is True and obj.nombre == "Personal Limpieza":
                         objetos.pop(i)
                 self.objetos = objetos 
                 self.nombre_evento = "Fin de limpieza cancha"
