@@ -25,7 +25,7 @@ class Temporal:
     def __str__(self):
         return f"Nombre: {self.nombre}, Estado: {self.estado}, Hora de llegada: {self.truncar(self.hora_llegada)}\n"
 class Fila:
-    def __init__(self, id, reloj=0.0, eventos=[], estado_cancha="Cancha Libre", colaB=[], colaFyH=[],tiempo_espera_futbol=0, tiempo_espera_basquetball=0, tiempo_espera_handball=0, tiempo_espera_ocupacion_limpieza=0) -> None:
+    def __init__(self, id, reloj=0.0, eventos=[], estado_cancha="Cancha Libre", colaB=[], colaFyH=[],tiempo_espera_futbol=0, tiempo_espera_basquetball=0, tiempo_espera_handball=0, tiempo_espera_ocupacion_limpieza=0, objetos=[]) -> None:
         self.id = id
         self.nombre_evento = ""
         self.reloj = reloj
@@ -37,7 +37,7 @@ class Fila:
         self.tiempo_espera_basquetball = tiempo_espera_basquetball
         self.tiempo_espera_handball = tiempo_espera_handball
         self.tiempo_espera_ocupacion_limpieza = tiempo_espera_ocupacion_limpieza
-        self.objetos = self.colaB + self.colaFyH
+        self.objetos = objetos
  
     
 
@@ -74,7 +74,7 @@ class Fila:
                             [rnd_llegada_handball, llegada_handball, self.reloj + llegada_handball],
                             [None, None, None], [None, None, None], [None, None, None], [None, None, None]]
             reloj = min((evento[2] for evento in self.eventos if evento[2] is not None), default=None)
-            return [reloj, self.eventos, self.estado_cancha, [], [], self.tiempo_espera_futbol, self.tiempo_espera_basquetball, self.tiempo_espera_handball, self.tiempo_espera_ocupacion_limpieza]
+            return [reloj, self.eventos, self.estado_cancha, [], [], self.tiempo_espera_futbol, self.tiempo_espera_basquetball, self.tiempo_espera_handball, self.tiempo_espera_ocupacion_limpieza, []]
         else:
             self.reloj = min((evento[2] for evento in self.eventos if evento[2] is not None), default=None)
             #self.reloj = min(self.eventos[0][2], self.eventos[1][2], self.eventos[2][2], self.eventos[3][2], self.eventos[4][2], self.eventos[5][2], self.eventos[6][2])
@@ -95,8 +95,10 @@ class Fila:
                                         [rnd_ocupacion_futbol, fin_ocupacion_futbol, self.reloj + fin_ocupacion_futbol], 
                                         self.eventos[4], self.eventos[5], self.eventos[6]]
                     else:
-                        self.colaFyH.append(self.equipo_futbol("Futbol", "Esperando Jugar", self.reloj))
-                        self.objetos.append(self.equipo_futbol("Futbol", "Esperando Jugar", self.reloj))
+                        equipo = self.equipo_futbol("Futbol", "Esperando Jugar", self.reloj)
+                        equipo.set_estado("Esperando Jugar")
+                        self.colaFyH.append(equipo)
+                        self.objetos.append(equipo)
                         self.eventos = [[rnd_llegada_futbol, llegada_futbol, self.reloj + llegada_futbol], 
                                         self.eventos[1], 
                                         self.eventos[2],
@@ -125,8 +127,10 @@ class Fila:
                                         [rnd_ocupacion_basquet, fin_ocupacion_basquet, self.reloj + fin_ocupacion_basquet], 
                                         self.eventos[5], self.eventos[6]]
                     else:
-                        self.colaB.append(self.equipo_basquet("Basquet", "Esperando Jugar", self.reloj))
-                        self.objetos.append(self.equipo_basquet("Basquet", "Esperando Jugar", self.reloj))
+                        equipo = self.equipo_basquet("Basquet", "Esperando Jugar", self.reloj)
+                        equipo.set_estado("Esperando Jugar")
+                        self.colaB.append(equipo)
+                        self.objetos.append(equipo)
                         self.eventos = [self.eventos[0], 
                                         [rnd_llegada_basquet, llegada_basquet, self.reloj + llegada_basquet], 
                                         self.eventos[2],
@@ -158,8 +162,12 @@ class Fila:
                                         [rnd_ocupacion_handball, fin_ocupacion_handball, self.reloj + fin_ocupacion_handball], 
                                         self.eventos[6]]
                     else:
-                        self.colaFyH.append(self.equipo_handball("Handball", "Esperando Jugar", self.reloj))
-                        self.objetos.append(self.equipo_handball("Handball", "Esperando Jugar", self.reloj))
+                        equipo = self.equipo_handball("Handball", "Esperando Jugar", self.reloj)
+                        equipo.set_estado("Esperando Jugar")
+                        self.colaFyH.append(equipo)
+                        objetos = self.objetos
+                        objetos.append(equipo)
+                        self.objetos = objetos
                         self.eventos = [self.eventos[0],
                                         self.eventos[1],
                                         [rnd_llegada_handball, llegada_handball, self.reloj + llegada_handball],
@@ -178,6 +186,11 @@ class Fila:
             elif self.reloj == self.eventos[3][2]:
                 hora_comienzo_limpieza = self.reloj
                 self.nombre_evento = "Fin de ocupacion cancha de futbol"
+                objetos = self.objetos
+                for i, obj in enumerate(objetos):
+                    if obj.estado == "Jugando":
+                        objetos.pop(i)
+                self.objetos = objetos
                 self.objetos.append(self.personal_limpieza("Personal Limpieza", "Limpiando", self.reloj))
                 self.eventos = [self.eventos[0], 
                                 self.eventos[1], 
@@ -189,6 +202,11 @@ class Fila:
             elif self.reloj == self.eventos[4][2]:
                 hora_comienzo_limpieza = self.reloj
                 self.nombre_evento = "Fin de ocupacion cancha de basquetball"
+                objetos = self.objetos
+                for i, obj in enumerate(objetos):
+                    if obj.estado == "Jugando":
+                        objetos.pop(i)
+                self.objetos = objetos
                 self.objetos.append(self.personal_limpieza("Personal Limpieza", "Limpiando", self.reloj))
                 self.eventos = [self.eventos[0], 
                                 self.eventos[1], 
@@ -200,6 +218,11 @@ class Fila:
             elif self.reloj == self.eventos[5][2]:
                 hora_comienzo_limpieza = self.reloj
                 self.nombre_evento = "Fin de ocupacion cancha de handball"
+                objetos = self.objetos
+                for i, obj in enumerate(objetos):
+                    if obj.estado == "Jugando":
+                        objetos.pop(i)
+                self.objetos = objetos
                 self.objetos.append(self.personal_limpieza("Personal Limpieza", "Limpiando", self.reloj))
                 self.eventos = [self.eventos[0], 
                                 self.eventos[1], 
@@ -214,13 +237,17 @@ class Fila:
                     cola = self.colaFyH
                     equipo = cola.pop(0)
                     self.colaFyH = cola
-                    self.estado_cancha = "Cancha Ocupada"
+                    self.estado_cancha = "Cancha ocupada"
                     if equipo.nombre == "Futbol":
                         rnd_ocupacion_futbol = random.random()
                         fin_ocupacion_futbol = self.distribucion_uniforme(rnd_ocupacion_futbol, fin_ocupacion_futbol_inf,fin_ocupacion_futbol_sup)
                         self.tiempo_espera_futbol += (self.reloj - equipo.hora_llegada)
-                        equipo.set_estado("Jugando")
-                        self.objetos.append(equipo)
+                        objetos = self.objetos
+                        for i, obj in enumerate(objetos):
+                            if obj.estado == "Esperando Jugar" and obj.nombre == "Futbol":
+                                obj.set_estado("Jugando")
+                                break
+                        self.objetos = objetos
                         self.eventos = [self.eventos[0], 
                                         self.eventos[1], 
                                         self.eventos[2],
@@ -232,8 +259,12 @@ class Fila:
                         rnd_ocupacion_handball = random.random()
                         fin_ocupacion_handball  = self.distribucion_uniforme(rnd_ocupacion_handball, fin_ocupacion_handball_inf,fin_ocupacion_handball_sup)
                         self.tiempo_espera_handball += (self.reloj - equipo.hora_llegada)
-                        equipo.set_estado("Jugando")
-                        self.objetos.append(equipo)
+                        objetos = self.objetos
+                        for i, obj in enumerate(objetos):
+                            if obj.estado == "Esperando Jugar" and obj.nombre == "Handball":
+                                obj.set_estado("Jugando")
+                                break
+                        self.objetos = objetos
                         self.eventos = [self.eventos[0],
                                         self.eventos[1],
                                         self.eventos[2],
@@ -245,11 +276,15 @@ class Fila:
                     cola = self.colaB
                     equipo = cola.pop(0)
                     self.colaB = cola
-                    self.estado_cancha = "Cancha Ocupada"
+                    self.estado_cancha = "Cancha ocupada"
                     rnd_ocupacion_basquet = random.random()
                     fin_ocupacion_basquet  = self.distribucion_uniforme(rnd_ocupacion_basquet, fin_ocupacion_basquet_inf,fin_ocupacion_basquet_sup)
-                    equipo.set_estado("Jugando")
-                    self.objetos.append(equipo)
+                    objetos = self.objetos
+                    for i, obj in enumerate(objetos):
+                        if obj.estado == "Esperando Jugar" and obj.nombre == "Basquet":
+                            obj.set_estado("Jugando")
+                            break
+                    self.objetos = objetos
                     self.tiempo_espera_basquetball += (self.reloj - equipo.hora_llegada)
                     self.eventos = [self.eventos[0], 
                                     self.eventos[1], 
@@ -265,12 +300,18 @@ class Fila:
                                     [None, None, None], 
                                     [None, None, None], 
                                     [None, None, None], 
-                                    [None, None, None]] 
+                                    [None, None, None]]
+                objetos = self.objetos
+                for i, obj in enumerate(objetos):
+                    if obj.estado == "Limpiando":
+                        objetos.pop(i)
+                self.objetos = objetos 
                 self.nombre_evento = "Fin de limpieza cancha"
                 self.tiempo_espera_ocupacion_limpieza += tiempo_demora_limpieza
-            return [self.reloj, self.eventos, self.estado_cancha, self.colaB, self.colaFyH, self.tiempo_espera_futbol, self.tiempo_espera_basquetball, self.tiempo_espera_handball, self.tiempo_espera_ocupacion_limpieza]
+            return [self.reloj, self.eventos, self.estado_cancha, self.colaB, self.colaFyH, self.tiempo_espera_futbol, self.tiempo_espera_basquetball, self.tiempo_espera_handball, self.tiempo_espera_ocupacion_limpieza, self.objetos]
     def __str__(self):
-        return f"Nombre del evento: {self.nombre_evento}, Reloj: {self.reloj}, Eventos: {self.eventos}, Estado: {self.estado_cancha}, ColaB: {self.colaB}, ColaFyH: {self.colaFyH}, Objetos:{self.objetos[0] if len(self.objetos) > 0 else[]}\n"
+        return f"Nombre del evento: {self.nombre_evento}, Reloj: {self.reloj}, Eventos: {self.eventos}, Estado: {self.estado_cancha}, ColaB: {self.colaB}, ColaFyH: {self.colaFyH}, Objetos:{self.objetos}\n"
+    #self.objetos[0] if len(self.objetos) > 0 else[]
 
 class VentanaSimulador:
     def __init__(self, root):
@@ -342,28 +383,30 @@ class VentanaSimulador:
              fin_ocupacion_basquet_inf, fin_ocupacion_basquet_sup, fin_ocupacion_handball_inf, fin_ocupacion_handball_sup, cantidad_equipos_max]
         tabla = []
         colas = []
+        d = dict()
         for i in range(tiempo_total):
             if i == 0:
                 fila = Fila(i+1)
                 lista = fila.simular(datos)
                 tabla.append(fila)
                 colas.append([len(fila.colaB), len(fila.colaFyH)])
+                d[fila.id] = fila.objetos
             else:
                 if fila.reloj >= tiempo_total:
                     tabla.pop()
                     break
                 else:
-                    fila = Fila(i+1, lista[0], lista[1], lista[2], lista[3], lista[4], lista[5], lista[6], lista[7], lista[8])
+                    fila = Fila(i+1, lista[0], lista[1], lista[2], lista[3], lista[4], lista[5], lista[6], lista[7], lista[8], lista[9])
                     lista = fila.simular(datos)
                     tabla.append(fila)
                     colas.append([len(fila.colaB), len(fila.colaFyH)])
-
+                    d[fila.id] = [*fila.objetos]
 
 
         # Crear una nueva ventana para mostrar los resultados
         root_resultados = tk.Tk()
         resultados_ventana = ResultadosVentana(root_resultados)
-        resultados_ventana.mostrar_resultados(tabla, hora_especifica, cantidad_filas, colas)
+        resultados_ventana.mostrar_resultados(tabla, hora_especifica, cantidad_filas, colas, d)
 
 
 
@@ -422,7 +465,7 @@ class ResultadosVentana:
 
 
 
-    def mostrar_resultados(self, tabla_resultados, hora_especifica, cantidad_filas, colas):
+    def mostrar_resultados(self, tabla_resultados, hora_especifica, cantidad_filas, colas, objetos):
 
         # Truncar
         def truncar(numero, decimales=3):
@@ -439,21 +482,22 @@ class ResultadosVentana:
         if hora_especifica == 0 and cantidad_filas != 0:
             for i, fila in enumerate(tabla_resultados[0:cantidad_filas]):
                 objeto1, objeto2, objeto3, objeto4 = "", "", "", ""
-                if len(fila.objetos) > 0:
-                    if len(fila.objetos) == 1:
-                        objeto1 = str(fila.objetos[0])
-                    elif len(fila.objetos) == 2:
-                        objeto1 = str(fila.objetos[0])
-                        objeto2 = str(fila.objetos[1])
-                    elif len(fila.objetos) == 3:
-                        objeto1 = str(fila.objetos[0])
-                        objeto2 = str(fila.objetos[1])
-                        objeto3 = str(fila.objetos[2])
+                if len(objetos[fila.id]) > 0:
+                    if len(objetos[fila.id]) == 1:
+                        objeto1 = str(objetos[fila.id][0])
+                    elif len(objetos[fila.id]) == 2:
+                        objeto1 = str(objetos[fila.id][0])
+                        objeto2 = str(objetos[fila.id][1])
+                    elif len(objetos[fila.id]) == 3:
+                        objeto1 = str(objetos[fila.id][0])
+                        objeto2 = str(objetos[fila.id][1])
+                        objeto3 = str(objetos[fila.id][2])
                     else:
-                        objeto1 = str(fila.objetos[0])
-                        objeto2 = str(fila.objetos[1])
-                        objeto3 = str(fila.objetos[2])
-                        objeto4 = str(fila.objetos[3])
+                        objeto1 = str(objetos[fila.id][0])
+                        objeto2 = str(objetos[fila.id][1])
+                        objeto3 = str(objetos[fila.id][2])
+                        objeto4 = str(objetos[fila.id][3])
+                
                 self.tree.insert("", "end", values=(fila.id, fila.nombre_evento, truncar(fila.reloj),
                                 truncar(fila.eventos[0][0]), truncar(fila.eventos[0][1]),truncar(fila.eventos[0][2]), 
                                 truncar(fila.eventos[1][0]), truncar(fila.eventos[1][1]),truncar(fila.eventos[1][2]),
@@ -482,21 +526,21 @@ class ResultadosVentana:
             for i, fila in enumerate(tabla_resultados[0:cantidad_filas]):
                 if fila.reloj >= hora_especifica:
                     objeto1, objeto2, objeto3, objeto4 = "", "", "", ""
-                    if len(fila.objetos) > 0:
-                        if len(fila.objetos) == 1:
-                            objeto1 = str(fila.objetos[0])
-                        elif len(fila.objetos) == 2:
-                            objeto1 = str(fila.objetos[0])
-                            objeto2 = str(fila.objetos[1])
-                        elif len(fila.objetos) == 3:
-                            objeto1 = str(fila.objetos[0])
-                            objeto2 = str(fila.objetos[1])
-                            objeto3 = str(fila.objetos[2])
+                    if len(objetos[fila.id]) > 0:
+                        if len(objetos[fila.id]) == 1:
+                            objeto1 = str(objetos[fila.id][0])
+                        elif len(objetos[fila.id]) == 2:
+                            objeto1 = str(objetos[fila.id][0])
+                            objeto2 = str(objetos[fila.id][1])
+                        elif len(objetos[fila.id]) == 3:
+                            objeto1 = str(objetos[fila.id][0])
+                            objeto2 = str(objetos[fila.id][1])
+                            objeto3 = str(objetos[fila.id][2])
                         else:
-                            objeto1 = str(fila.objetos[0])
-                            objeto2 = str(fila.objetos[1])
-                            objeto3 = str(fila.objetos[2])
-                            objeto4 = str(fila.objetos[3])
+                            objeto1 = str(objetos[fila.id][0])
+                            objeto2 = str(objetos[fila.id][1])
+                            objeto3 = str(objetos[fila.id][2])
+                            objeto4 = str(objetos[fila.id][3])
                     self.tree.insert("", "end", values=(fila.id, fila.nombre_evento, truncar(fila.reloj),
                                     truncar(fila.eventos[0][0]), truncar(fila.eventos[0][1]), truncar(fila.eventos[0][2]), 
                                     truncar(fila.eventos[1][0]), truncar(fila.eventos[1][1]), truncar(fila.eventos[1][2]),
