@@ -436,22 +436,23 @@ class ResultadosVentana:
         
         # Configurar encabezados y anchos de columna
         columns = [
-            ("ID", 50), ("Evento", 200), ("Reloj", 150), ("rnd_f", 150), ("llegada_f", 150), ("proxima_f", 150),
-            ("rnd_b", 150), ("llegada_b", 150), ("proxima_b", 150), ("rnd_h", 150), ("llegada_h", 150), ("proxima_h", 150),
-            ("rnd_cancha_f", 150), ("ocupacion_cancha_f", 150), ("fin_ocupacion_f", 150),
-            ("rnd_cancha_b", 150), ("ocupacion_cancha_b", 150), ("fin_ocupacion_b", 150),
-            ("rnd_cancha_h", 150), ("ocupacion_cancha_h", 150), ("fin_ocupacion_h", 150),
-            ("tiempo_actual", 150), ("demora_limpieza", 150), ("fin_limpieza", 150),
-            ("Estado Cancha", 100), ("ColaB", 60), ("ColaFyH", 60),("Tiempo_espera_f",150),
-            ("Tiempo_espera_h",150),("Tiempo_espera_b",150),("Tiempo_ocupacion_limpieza",180),
-            ("Objeto1", 500),("Objeto2", 500),("Objeto3", 500),("Objeto4", 500)
+            ("ID", 50), ("Evento", 270), ("Reloj", 90), ("rnd_f", 80), ("llegada_f", 80), ("proxima_f", 80),
+            ("rnd_b", 80), ("llegada_b", 80), ("proxima_b", 80), ("rnd_h", 80), ("llegada_h", 80), ("proxima_h", 80),
+            ("rnd_cancha_f", 80), ("ocupacion_cancha_f", 120), ("fin_ocupacion_f", 120),
+            ("rnd_cancha_b", 80), ("ocupacion_cancha_b", 120), ("fin_ocupacion_b", 120),
+            ("rnd_cancha_h", 80), ("ocupacion_cancha_h", 120), ("fin_ocupacion_h", 120),
+            ("tiempo_actual", 80), ("demora_limpieza", 120), ("fin_limpieza", 80),
+            ("Estado Cancha", 120), ("ColaB", 60), ("ColaFyH", 60),("Tiempo_espera_f",120),
+            ("Tiempo_espera_h",120),("Tiempo_espera_b",120),("Tiempo_ocupacion_limpieza",160),
+            ("Objeto1", 480),("Objeto2", 480),("Objeto3", 480),("Objeto4", 480)
         ]
 
         for col, width in columns:
             self.tree.heading(col, text=col)
-            self.tree.column(col, width=width, anchor='center')
+            self.tree.column(col, minwidth=width, width=width, anchor='center')
     
-        self.tree.column("Evento", width=260, anchor='w')
+        self.tree.column("Estado Cancha", width=120, anchor='w')
+        self.tree.column("Evento", width=270, anchor='w')
         self.tree.column("Objeto1", width=480, anchor='w')
         self.tree.column("Objeto2", width=480, anchor='w')
         self.tree.column("Objeto3", width=480, anchor='w')
